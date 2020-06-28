@@ -1,4 +1,4 @@
-# couch-face
+# couchman
 
 ## Project setup
 ```
