@@ -16,7 +16,7 @@
                             v-for="conn in conns"
                             :key="conn.id"
                             :active="conn.active"
-                            @click="activate(conn.name)"
+                            @click="activate(conn)"
                         >
                             {{conn.name}}
                             <span class="float-right">
@@ -47,8 +47,8 @@ export default {
         Connect
     },
     methods: {
-        activate (name) {
-            this.$store.dispatch('connections/activate', name);
+        activate (conn) {
+            this.$store.dispatch('connections/activate', conn);
         }
     },
     computed: {

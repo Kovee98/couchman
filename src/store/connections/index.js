@@ -15,19 +15,28 @@ export default {
         add (state, conn) {
             state.conns.push(conn);
         },
-        activate (state, name) {
-            state.conns[state.curr.name].active = false;
-            state.conns[name].active = true;
-            state.curr = state.conns[name];
-            state.conns = Object.values(state.conns);
+        activate (state, conn) {
+            // deactivate current
+            state.curr.active = false;
+
+            // activate new
+            conn.active = true;
+            state.curr = conn;
         }
     },
     actions: {
         add (context, conn) {
+            // auto activate if it's the first/only connection
+            if (!context.state.curr) {
+                conn.active = true;
+                context.state.curr = conn;
+            }
             context.commit('add', conn);
+            db.connections.save(context.state);
         },
-        activate (context, name) {
-            context.commit('activate', name);
+        activate (context, conn) {
+            context.commit('activate', conn);
+            db.connections.save(context.state);
         },
         save (context) {
             db.connections.save(context.state);
@@ -36,7 +45,8 @@ export default {
             // load connections from db into memory
             db.connections.load().then((data) => {
                 if (data) {
-                    context.state = data;
+                    context.state.conns = data.conns;
+                    context.state.curr = data.curr;
                 }
             });
         }
