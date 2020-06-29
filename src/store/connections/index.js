@@ -22,6 +22,7 @@ export default {
             // activate new
             conn.active = true;
             state.curr = conn;
+            debugger;
         }
     },
     actions: {

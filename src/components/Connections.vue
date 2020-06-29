@@ -48,6 +48,7 @@ export default {
     },
     methods: {
         activate (conn) {
+            debugger;
             this.$store.dispatch('connections/activate', conn);
         }
     },

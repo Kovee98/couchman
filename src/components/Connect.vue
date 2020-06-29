@@ -99,6 +99,7 @@ export default {
                 pass: this.form.pass,
                 active: false
             };
+            debugger;
 
             this.$store.dispatch('connections/add', conn);
 
