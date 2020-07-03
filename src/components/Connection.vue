@@ -87,7 +87,7 @@ export default {
                 let fields = invalid.join(', ');
                 this.$events.$emit('alert-open', {
                     variant: 'danger',
-                    msg: `Missing required fields: ${fields}`
+                    msg: `Missing required field(s): ${fields}`
                 });
                 return;
             }

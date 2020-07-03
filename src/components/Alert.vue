@@ -1,6 +1,7 @@
 <template>
     <b-alert
-        v-model="show"
+        :show="countdown"
+        @dismiss-count-down="countdownChanged"
         :variant="variant"
         dismissible
         fade
@@ -15,15 +16,22 @@ export default {
     data () {
         return {
             show: false,
+            countdownSec: 5,
+            countdown: 0,
             variant: 'default',
             msg: 'This is an alert'
         };
+    },
+    methods: {
+        countdownChanged (countdown) {
+            this.countdown = countdown;
+        }
     },
     created () {
         this.$events.$on('alert-open', (data) => {
             this.msg = data.msg;
             this.variant = data.variant;
-            this.show = true;
+            this.countdown = this.countdownSec;
         });
 
         this.$events.$on('alert-close', (data) => {
