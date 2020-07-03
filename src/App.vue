@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <Alert/>
         <Confirmation/>
         <Navbar/>
         <b-container>
@@ -12,12 +13,14 @@
 // @ is an alias to /src
 import Navbar from '@/components/Navbar.vue';
 import Confirmation from '@/components/Confirmation.vue';
+import Alert from '@/components/Alert.vue';
 
 export default {
     name: 'App',
     components: {
         Navbar,
         Confirmation,
+        Alert
     },
     created () {
         this.$store.dispatch('connections/init');
@@ -44,5 +47,29 @@ export default {
       color: #42b983;
     }
   }
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.edit {
+    cursor: pointer;
+    display: inline;
+    :hover {
+        color: black;
+    }
+}
+
+.remove {
+    cursor: pointer;
+    display: inline;
+    :hover {
+        color: red;
+    }
 }
 </style>
