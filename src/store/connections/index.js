@@ -15,6 +15,9 @@ export default {
         add (state, conn) {
             state.conns.push(conn);
         },
+        remove (state, i) {
+            state.conns.splice(i, 1);
+        },
         activate (state, conn) {
             // deactivate current
             state.curr.active = false;
@@ -22,7 +25,6 @@ export default {
             // activate new
             conn.active = true;
             state.curr = conn;
-            debugger;
         }
     },
     actions: {
@@ -33,6 +35,10 @@ export default {
                 context.state.curr = conn;
             }
             context.commit('add', conn);
+            db.connections.save(context.state);
+        },
+        remove (context, i) {
+            context.commit('remove', i);
             db.connections.save(context.state);
         },
         activate (context, conn) {
@@ -51,7 +57,5 @@ export default {
                 }
             });
         }
-    },
-    modules: {
     }
 };
