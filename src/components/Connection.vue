@@ -82,6 +82,8 @@ export default {
             let invalid = [];
             if (!conn.name) invalid.push('name');
             if (!conn.url) invalid.push('url');
+            if (conn.user && !conn.pass) invalid.push('password');
+            if (!conn.user && conn.pass) invalid.push('user');
 
             if (invalid.length > 0) {
                 let fields = invalid.join(', ');
@@ -98,7 +100,7 @@ export default {
         },
         getConn: function (form) {
             let url = this.form.url;
-            if (this.form.user && this.form.pass) {
+            if (url && this.form.user && this.form.pass) {
                 url = url.split('//');
                 url = `${url[0]}//${this.form.user}:${this.form.pass}@${url[1]}`;
             }
