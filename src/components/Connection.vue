@@ -85,6 +85,8 @@ export default {
             if (conn.user && !conn.pass) invalid.push('password');
             if (!conn.user && conn.pass) invalid.push('user');
 
+            // TODO: check for pre-existing connections that already have that name and/or url
+
             if (invalid.length > 0) {
                 let fields = invalid.join(', ');
                 this.$events.$emit('alert-open', {
