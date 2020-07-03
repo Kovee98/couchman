@@ -1,14 +1,24 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
+import Databases from '../views/Databases.vue';
+import Documents from '../views/Documents.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
     {
         path: '/',
-        name: 'Home',
-        component: Home
+        redirect: '/dbs'
+    },
+    {
+        path: '/dbs',
+        name: 'Databases',
+        component: Databases
+    },
+    {
+        path: '/dbs/:db',
+        name: 'Documents',
+        component: Documents
     }
 ];
 

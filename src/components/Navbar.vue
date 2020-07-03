@@ -1,9 +1,9 @@
 <template>
     <div>
         <b-navbar type="dark" variant="dark">
-            <b-navbar-brand href="#">Couchman</b-navbar-brand>
+            <b-navbar-brand href="/">Couchman</b-navbar-brand>
             <b-navbar-nav>
-                <b-nav-item href="#">Home</b-nav-item>
+                <b-nav-item href="/#/dbs">Databases</b-nav-item>
                 <Connections/>
 
                 <!-- dropdown -->
