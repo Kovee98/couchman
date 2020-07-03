@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <Confirmation/>
         <Navbar/>
         <b-container>
             <router-view/>
@@ -10,11 +11,13 @@
 <script>
 // @ is an alias to /src
 import Navbar from '@/components/Navbar.vue';
+import Confirmation from '@/components/Confirmation.vue';
 
 export default {
     name: 'App',
     components: {
-        Navbar
+        Navbar,
+        Confirmation,
     },
     created () {
         this.$store.dispatch('connections/init');
