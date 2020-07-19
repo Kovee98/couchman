@@ -72,4 +72,11 @@ export default {
         color: red;
     }
 }
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 </style>
