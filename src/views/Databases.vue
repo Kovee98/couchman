@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import { mapFields } from 'vuex-map-fields';
 import format from '../js/format';
 
 export default {
+    props: ['curr'],
     name: 'Databases',
     data: function () {
         return {
@@ -44,10 +44,10 @@ export default {
             loading: false
         };
     },
-    computed: {
-        ...mapFields('connections', [
-            'curr'
-        ])
+    watch: {
+        curr: function () {
+            this.refresh();
+        }
     },
     methods: {
         remove (db) {

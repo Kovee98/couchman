@@ -1,5 +1,4 @@
 import db from '../../js/db';
-import { getField, updateField } from 'vuex-map-fields';
 
 export default {
     namespaced: true,
@@ -8,10 +7,10 @@ export default {
         conns: []
     },
     getters: {
-        getField
+        conns: (state) => state.conns,
+        curr: (state) => state.curr
     },
     mutations: {
-        updateField,
         add (state, conn) {
             state.conns.push(conn);
         },

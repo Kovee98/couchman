@@ -43,7 +43,6 @@
 <script>
 // @ is an alias to /src
 import Connection from '@/components/Connection.vue';
-import { mapFields } from 'vuex-map-fields';
 
 export default {
     name: 'Connections',
@@ -51,9 +50,9 @@ export default {
         Connection
     },
     computed: {
-        ...mapFields('connections', [
-            'conns'
-        ])
+        conns () {
+            return this.$store.getters['connections/conns'];
+        }
     },
     methods: {
         add () {
