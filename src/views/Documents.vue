@@ -72,8 +72,6 @@ export default {
     },
     mounted () {
         this.refresh();
-    },
-    created () {
         this.$events.$on('refresh', (e) => {
             this.refresh();
         });

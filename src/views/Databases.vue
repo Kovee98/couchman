@@ -94,10 +94,7 @@ export default {
         }
     },
     mounted () {
-        console.log('dbs updated');
         this.refresh();
-    },
-    created () {
         this.$events.$on('refresh', (e) => {
             this.refresh();
         });

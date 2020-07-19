@@ -4,7 +4,7 @@
         <Confirmation/>
         <Navbar/>
         <b-container>
-            <router-view/>
+            <router-view :curr="$store.getters['connections/curr']" />
         </b-container>
     </div>
 </template>
