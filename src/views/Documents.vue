@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="h2 py-2 my-3 capitalize">{{db}} <b-icon-arrow-counterclockwise @click="refresh" class="clickable" font-scale="0.75"/></p>
+        <p class="h2 py-2 my-3">{{db}} <b-icon-arrow-counterclockwise @click="refresh" class="clickable" font-scale="0.75"/></p>
 
         <b-table
             :items="docs"
@@ -78,9 +78,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-    .clickable {
-        cursor: pointer;
-    }
-</style>
