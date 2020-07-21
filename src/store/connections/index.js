@@ -3,6 +3,7 @@ import db from '../../js/db';
 export default {
     namespaced: true,
     state: {
+        id: 0,
         curr: null,
         conns: []
     },
@@ -12,7 +13,9 @@ export default {
     },
     mutations: {
         add (state, conn) {
+            conn.id = state.id;
             state.conns.push(conn);
+            state.id++;
         },
         remove (state, i) {
             state.conns.splice(i, 1);
@@ -53,6 +56,7 @@ export default {
                 if (data) {
                     context.state.conns = data.conns;
                     context.state.curr = data.curr;
+                    context.state.id = data.id;
                 }
             });
         }
