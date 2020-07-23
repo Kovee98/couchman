@@ -9,6 +9,7 @@
                 title="Connections"
                 backdrop
                 shadow
+                width="400px"
             >
                 <div class="px-3 py-2">
                     <b-list-group>
@@ -18,12 +19,16 @@
                             :key="conn.id"
                             :variant="conn.active ? 'secondary' : ''"
                             @click="activate(conn)"
+                            v-b-tooltip.hover.bottom="conn.url"
                         >
-                            {{conn.name}}
-                            <span class="float-right">
-                                <div class="edit pl-2" @click="edit(conn)"><b-icon-pencil font-scale="1.125"/></div>
-                                <div class="remove pl-2" @click="remove(conn, i)"><b-icon-trash font-scale="1.125"/></div>
-                            </span>
+                            <div class="row">
+                                <span class="text-truncate col-4">{{conn.name}}</span>
+                                <span class="text-muted text-truncate col-5 px-0">{{conn.url}}</span>
+                                <span class="col-2 px-0 ml-3">
+                                    <div class="edit pl-2" @click.stop="edit(conn)"><b-icon-pencil font-scale="1.125"/></div>
+                                    <div class="remove pl-2" @click.stop="remove(conn, i)"><b-icon-trash font-scale="1.125"/></div>
+                                </span>
+                            </div>
                         </b-list-group-item>
                     </b-list-group>
                 </div>
