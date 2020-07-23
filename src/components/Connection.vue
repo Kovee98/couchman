@@ -50,10 +50,7 @@
 
             <template v-slot:modal-footer>
                 <div>
-                    <b-button
-                        variant="success"
-                        @click="submit"
-                    >
+                    <b-button variant="success" @click="submit">
                         {{isNew ? 'Add' : 'Update'}}
                     </b-button>
                 </div>
@@ -84,8 +81,6 @@ export default {
             if (!conn.url) invalid.push('url');
             if (conn.user && !conn.pass) invalid.push('password');
             if (!conn.user && conn.pass) invalid.push('user');
-
-            // TODO: check for pre-existing connections that already have that name and/or url
 
             if (invalid.length > 0) {
                 let fields = invalid.join(', ');
