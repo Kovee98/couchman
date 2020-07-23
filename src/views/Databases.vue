@@ -1,12 +1,13 @@
 <template>
     <div>
-        <p class="h2 py-2 my-3">Databases <b-icon-arrow-counterclockwise @click="refresh" class="clickable" font-scale="0.75"/></p>
-
+        <b-form-input v-model="filter" placeholder="Filter dbs..." class="my-3"></b-form-input>
         <b-table
             :items="dbs"
             :fields="fields"
+            :filter="filter"
             outlined
             striped
+            fixed
             head-variant="dark"
             table-variant="light"
             :busy="loading"
@@ -17,7 +18,6 @@
 
             <template v-slot:cell(actions)="row">
                 <span class="float-right">
-                    <!-- <div class="edit pl-2" @click="edit(conn)"><b-icon-pencil font-scale="1.125"/></div> -->
                     <div class="remove pl-2" @click="remove(row.item.name)"><b-icon-trash font-scale="1.125"/></div>
                 </span>
             </template>
@@ -33,13 +33,39 @@ export default {
     name: 'Databases',
     data: function () {
         return {
+            filter: '',
             dbs: [],
             fields: [
-                { key: 'name', label: 'Name' },
-                { key: 'doc_count', label: 'Count' },
-                { key: 'adapter', label: 'Adapter' },
-                { key: 'size', label: 'Size', formatter: format.size },
-                { key: 'actions', label: '' }
+                {
+                    key: 'name',
+                    label: 'Name',
+                    sortable: true,
+                    class: 'truncate'
+                },
+                {
+                    key: 'doc_count',
+                    label: 'Count',
+                    sortable: true,
+                    class: 'truncate'
+                },
+                {
+                    key: 'adapter',
+                    label: 'Adapter',
+                    sortable: true,
+                    class: 'truncate'
+                },
+                {
+                    key: 'size',
+                    label: 'Size',
+                    formatter: format.size,
+                    sortable: true,
+                    class: 'truncate'
+                },
+                {
+                    key: 'actions',
+                    label: '',
+                    class: 'actions'
+                }
             ],
             loading: false
         };
