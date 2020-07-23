@@ -4,6 +4,13 @@
         <Confirmation/>
         <Navbar/>
         <b-container>
+            <div class="pt-3">
+                <span class="h4 py-2 my-3"><b-link href="/#/dbs">Databases</b-link></span>
+                <span v-if="this.$route.params.db">
+                    <b-icon-chevron-left class="mx-2" font-scale="1.125"/>
+                    <span class="h4 py-2 my-3">{{this.$route.params.db}}</span>
+                </span>
+            </div>
             <router-view :curr="$store.getters['connections/curr']" />
         </b-container>
     </div>
@@ -77,6 +84,10 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.actions {
+    width: 100px;
 }
 
 </style>
