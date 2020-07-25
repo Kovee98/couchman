@@ -25,7 +25,7 @@
 
 <script>
 export default {
-    props: ['curr'],
+    props: ['curr', 'conns'],
     name: 'Databases',
     data: function () {
         return {
@@ -63,8 +63,9 @@ export default {
         },
         refresh () {
             this.loading = true;
-            if (this.curr && this.curr.url) {
-                this.$axios.get(`${this.curr.url}/${this.db}/_all_docs?include_docs=true`).then(({ data }) => {
+            let currConn = this.conns[this.curr];
+            if (currConn && currConn.url) {
+                this.$axios.get(`${currConn.url}/${this.db}/_all_docs?include_docs=true`).then(({ data }) => {
                     this.docs = data.rows.map(row => row.doc);
 
                     let fields = Object.keys(this.docs[0]);
