@@ -1,6 +1,9 @@
 <template>
     <div>
-        <b-modal id="connection" :title="`${isNew ? 'Add' : 'Update'} Connection`">
+        <b-modal id="connection">
+            <template v-slot:modal-title class="capitalize">
+                <span class="capitalize">{{action}} Connection</span>
+            </template>
             <div class="d-block">
                 <b-form>
                     <b-form-group
@@ -50,8 +53,8 @@
 
             <template v-slot:modal-footer>
                 <div>
-                    <b-button variant="success" @click="submit">
-                        {{isNew ? 'Add' : 'Update'}}
+                    <b-button class="capitalize" variant="success" @click="submit">
+                        {{action}}
                     </b-button>
                 </div>
             </template>
@@ -63,7 +66,9 @@
 export default {
     data: function () {
         return {
-            isNew: true,
+            action: '',
+            conn: {},
+            index: -1,
             form: {
                 name: '',
                 url: '',
@@ -76,11 +81,7 @@ export default {
         submit: function () {
             let conn = this.getConn();
 
-            let invalid = [];
-            if (!conn.name) invalid.push('name');
-            if (!conn.url) invalid.push('url');
-            if (conn.user && !conn.pass) invalid.push('password');
-            if (!conn.user && conn.pass) invalid.push('user');
+            let invalid = this.validate(conn);
 
             if (invalid.length > 0) {
                 let fields = invalid.join(', ');
@@ -92,28 +93,46 @@ export default {
             }
 
             this.$events.$emit('alert-close');
-            this.$store.dispatch(`connections/${this.isNew ? 'add' : 'update'}`, conn);
+
+            let action = `connections/${this.action}`;
+            this.$store.dispatch(action, {
+                i: this.index,
+                conn: conn
+            });
+
             this.$bvModal.hide('connection');
         },
-        getConn: function (form) {
+        validate (conn) {
+            let invalid = [];
+
+            if (!conn.name) invalid.push('name');
+            if (!conn.url) invalid.push('url');
+            if (conn.user && !conn.pass) invalid.push('password');
+            if (!conn.user && conn.pass) invalid.push('user');
+
+            return invalid;
+        },
+        getConn (form) {
             let url = this.form.url;
             if (url && this.form.user && this.form.pass) {
                 url = url.split('//');
                 url = `${url[0]}//${this.form.user}:${this.form.pass}@${url[1]}`;
             }
 
-            return {
+            return Object.assign(this.conn || {}, {
                 name: this.form.name,
                 url: url,
                 user: this.form.user,
-                pass: this.form.pass,
-                active: false
-            };
+                pass: this.form.pass
+            });
         }
     },
     created () {
         this.$events.$on('connection-add', () => {
-            this.isNew = true;
+            this.action = 'add';
+            this.conn = {};
+            this.index = -1;
+
             this.form.name = '';
             this.form.url = '';
             this.form.user = '';
@@ -122,8 +141,11 @@ export default {
             this.$bvModal.show('connection');
         });
 
-        this.$events.$on('connection-edit', (conn) => {
-            this.isNew = false;
+        this.$events.$on('connection-update', (i, conn) => {
+            this.action = 'update';
+            this.conn = conn || {};
+            this.index = i;
+
             this.form.name = conn.name || '';
             this.form.url = conn.url || '';
             this.form.user = conn.user || '';
