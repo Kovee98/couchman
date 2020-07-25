@@ -8,17 +8,15 @@
             outlined
             striped
             fixed
+            tbody-tr-class="tr"
             head-variant="dark"
             table-variant="light"
             :busy="loading"
+            @row-clicked="open"
         >
-            <template v-slot:cell(name)="data">
-                <b-link :href="`/#/dbs/${data.value}`">{{data.value}}</b-link>
-            </template>
-
             <template v-slot:cell(actions)="row">
                 <span class="float-right">
-                    <div class="remove pl-2" @click="remove(row.item.name)"><b-icon-trash font-scale="1.125"/></div>
+                    <div class="remove pl-2" @click.stop="remove(row)"><b-icon-trash font-scale="1.125"/></div>
                 </span>
             </template>
         </b-table>
@@ -40,26 +38,26 @@ export default {
                     key: 'name',
                     label: 'Name',
                     sortable: true,
-                    class: 'truncate'
+                    class: 'truncate td'
                 },
                 {
                     key: 'doc_count',
                     label: 'Count',
                     sortable: true,
-                    class: 'truncate'
+                    class: 'truncate td'
                 },
                 {
                     key: 'adapter',
                     label: 'Adapter',
                     sortable: true,
-                    class: 'truncate'
+                    class: 'truncate td'
                 },
                 {
                     key: 'size',
                     label: 'Size',
                     formatter: format.size,
                     sortable: true,
-                    class: 'truncate'
+                    class: 'truncate td'
                 },
                 {
                     key: 'actions',
@@ -79,14 +77,18 @@ export default {
         }
     },
     methods: {
-        remove (db) {
+        open (db) {
+            this.$router.push(`/dbs/${db.name}`);
+        },
+        remove (row) {
+            let currConn = this.conns[this.curr];
             this.$events.$emit('confirm', {
                 title: 'Delete DB',
-                body: `Are you sure you want to delete the ${db} database? This can't be undone.`,
+                body: `Are you sure you want to delete the ${row.item.name} database? This can't be undone.`,
                 confirm: {
                     text: 'Delete',
                     action: () => {
-                        this.$axios.delete(`${this.curr.url}/${db}`).catch((err) => {
+                        this.$axios.delete(`${currConn.url}/${row.item.name}`).catch((err) => {
                             console.log('err:', err);
                         }).finally(() => {
                             this.refresh();

@@ -8,15 +8,15 @@
             outlined
             striped
             fixed
-            responsive
+            tbody-tr-class="tr"
             head-variant="dark"
             table-variant="light"
             :busy="loading"
+            @row-clicked="edit"
         >
-            <template v-slot:cell(actions)="row" style="width:">
+            <template v-slot:cell(actions)="row">
                 <span class="float-right">
-                    <div class="edit pl-2" @click="edit(conn)"><b-icon-pencil font-scale="1.125"/></div>
-                    <div class="remove pl-2" @click="remove(row)"><b-icon-trash font-scale="1.125"/></div>
+                    <div class="remove pl-2" @click.stop="remove(row)"><b-icon-trash font-scale="1.125"/></div>
                 </span>
             </template>
         </b-table>
@@ -73,7 +73,7 @@ export default {
                         return {
                             key: field,
                             sortable: true,
-                            class: 'truncate'
+                            class: 'truncate td'
                         };
                     });
                     fields.push({
