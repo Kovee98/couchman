@@ -2,6 +2,7 @@
     <div id="app">
         <Alert/>
         <Confirmation/>
+        <Document :curr="curr" :conns="conns" />
         <Navbar :curr="curr" :conns="conns" />
         <b-container>
             <div class="pt-3">
@@ -26,12 +27,15 @@
 import Navbar from '@/components/Navbar.vue';
 import Confirmation from '@/components/Confirmation.vue';
 import Alert from '@/components/Alert.vue';
+import Document from '@/components/Document.vue';
 
 export default {
     name: 'App',
     components: {
         Navbar,
         Confirmation,
+        Alert,
+        Document
     },
     computed: {
         curr () {

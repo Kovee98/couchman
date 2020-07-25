@@ -30,7 +30,6 @@ export default {
     data: function () {
         return {
             filter: '',
-            db: this.$route.params.db,
             docs: [],
             fields: [],
             loading: false
@@ -45,6 +44,9 @@ export default {
         }
     },
     methods: {
+        edit (doc) {
+            this.$router.push({ name: this.$route.name, query: { doc: doc._id } });
+        },
         remove (row) {
             this.$events.$emit('confirm', {
                 title: 'Delete Document',
@@ -65,7 +67,7 @@ export default {
             this.loading = true;
             let currConn = this.conns[this.curr];
             if (currConn && currConn.url) {
-                this.$axios.get(`${currConn.url}/${this.db}/_all_docs?include_docs=true`).then(({ data }) => {
+                this.$axios.get(`${currConn.url}/${this.$route.params.db}/_all_docs?include_docs=true`).then(({ data }) => {
                     this.docs = data.rows.map(row => row.doc);
 
                     let fields = Object.keys(this.docs[0]);

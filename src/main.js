@@ -12,6 +12,16 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
+// codemirror dependencies
+import VueCodemirror from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/addon/edit/matchbrackets.js';
+import 'codemirror/addon/edit/closebrackets.js';
+import 'codemirror/addon/selection/active-line.js';
+Vue.use(VueCodemirror);
+
+// general globals
 Vue.use({
     install (Vue) {
         Vue.prototype.$axios = axios;
