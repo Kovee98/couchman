@@ -3,7 +3,7 @@
         <b-navbar type="dark" variant="dark">
             <b-navbar-brand href="/#/dbs">Couchman</b-navbar-brand>
             <b-navbar-nav>
-                <Connections/>
+                <Connections :curr="curr" :conns="conns" />
             </b-navbar-nav>
         </b-navbar>
     </div>
@@ -13,6 +13,7 @@
 import Connections from '@/components/Connections.vue';
 
 export default {
+    props: ['curr', 'conns'],
     name: 'Navbar',
     components: {
         Connections

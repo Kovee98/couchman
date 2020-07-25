@@ -2,7 +2,7 @@
     <div id="app">
         <Alert/>
         <Confirmation/>
-        <Navbar/>
+        <Navbar :curr="curr" :conns="conns" />
         <b-container>
             <div class="pt-3">
                 <span v-if="this.$route.params.db">
@@ -16,7 +16,7 @@
                     <span class="h4 py-2 my-3">{{this.$route.params.db}}</span>
                 </span>
             </div>
-            <router-view :curr="$store.getters['connections/curr']" />
+            <router-view :curr="curr" :conns="conns" />
         </b-container>
     </div>
 </template>
@@ -32,7 +32,14 @@ export default {
     components: {
         Navbar,
         Confirmation,
-        Alert
+    },
+    computed: {
+        curr () {
+            return this.$store.getters['connections/curr'];
+        },
+        conns () {
+            return this.$store.getters['connections/conns'];
+        }
     },
     created () {
         this.$store.dispatch('connections/init');
@@ -69,7 +76,7 @@ export default {
     cursor: pointer;
 }
 
-.edit {
+.update {
     cursor: pointer;
     display: inline;
     :hover {

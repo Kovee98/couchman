@@ -39,6 +39,9 @@ export default {
     watch: {
         curr: function () {
             this.refresh();
+        },
+        conns: function () {
+            this.refresh();
         }
     },
     methods: {

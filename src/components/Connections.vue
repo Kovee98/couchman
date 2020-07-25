@@ -17,16 +17,15 @@
                             href="#"
                             v-for="(conn, i) in conns"
                             :key="conn.id"
-                            :variant="conn.active ? 'secondary' : ''"
-                            @click="activate(conn)"
-                            v-b-tooltip.hover.bottom="conn.url"
+                            :variant="i === curr ? 'secondary' : ''"
+                            @click="activate(i)"
                         >
                             <div class="row">
                                 <span class="text-truncate col-4">{{conn.name}}</span>
                                 <span class="text-muted text-truncate col-5 px-0">{{conn.url}}</span>
                                 <span class="col-2 px-0 ml-3">
-                                    <div class="edit pl-2" @click.stop="edit(conn)"><b-icon-pencil font-scale="1.125"/></div>
-                                    <div class="remove pl-2" @click.stop="remove(conn, i)"><b-icon-trash font-scale="1.125"/></div>
+                                    <div class="update pl-2" @click.stop="update(i, conn)"><b-icon-pencil font-scale="1.125"/></div>
+                                    <div class="remove pl-2" @click.stop="remove(i, conn)"><b-icon-trash font-scale="1.125"/></div>
                                 </span>
                             </div>
                         </b-list-group-item>
@@ -50,27 +49,23 @@
 import Connection from '@/components/Connection.vue';
 
 export default {
+    props: ['curr', 'conns'],
     name: 'Connections',
     components: {
         Connection
-    },
-    computed: {
-        conns () {
-            return this.$store.getters['connections/conns'];
-        }
     },
     methods: {
         add () {
             this.$events.$emit('connection-add');
         },
-        activate (conn) {
-            this.$store.dispatch('connections/activate', conn);
+        activate (i) {
+            this.$store.dispatch('connections/activate', i);
             this.$events.$emit('refresh');
         },
-        edit (conn) {
-            this.$events.$emit('connection-edit', conn);
+        update (i, conn) {
+            this.$events.$emit('connection-update', i, conn);
         },
-        remove (conn, i) {
+        remove (i, conn) {
             this.$events.$emit('confirm', {
                 title: 'Delete Connection',
                 body: `Are you sure you want to delete the ${conn.name} connection? This can't be undone.`,

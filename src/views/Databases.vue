@@ -29,7 +29,7 @@
 import format from '../js/format';
 
 export default {
-    props: ['curr'],
+    props: ['curr', 'conns'],
     name: 'Databases',
     data: function () {
         return {
@@ -73,6 +73,9 @@ export default {
     watch: {
         curr: function () {
             this.refresh();
+        },
+        conns: function () {
+            this.refresh();
         }
     },
     methods: {
@@ -94,11 +97,12 @@ export default {
         },
         refresh () {
             this.loading = true;
-            if (this.curr && this.curr.url) {
-                this.$axios.get(`${this.curr.url}/_all_dbs`).then(({ data }) => {
+            let currConn = this.conns[this.curr];
+            if (currConn && currConn.url) {
+                this.$axios.get(`${currConn.url}/_all_dbs`).then(({ data }) => {
                     let queued = [];
                     data.forEach((db) => {
-                        queued.push(this.$axios.get(`${this.curr.url}/${db}`).then(db => db.data));
+                        queued.push(this.$axios.get(`${currConn.url}/${db}`).then(db => db.data));
                     });
 
                     Promise.all(queued).then((dbs) => {
