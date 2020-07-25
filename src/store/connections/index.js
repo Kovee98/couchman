@@ -1,10 +1,12 @@
+// import Vue from 'vue';
 import db from '../../js/db';
+
+const save = db.connections.save;
 
 export default {
     namespaced: true,
     state: {
-        id: 0,
-        curr: null,
+        curr: 0,
         conns: []
     },
     getters: {
@@ -13,42 +15,40 @@ export default {
     },
     mutations: {
         add (state, conn) {
-            conn.id = state.id;
             state.conns.push(conn);
-            state.id++;
         },
         remove (state, i) {
             state.conns.splice(i, 1);
-        },
-        activate (state, conn) {
-            // deactivate current
-            state.curr.active = false;
 
-            // activate new
-            conn.active = true;
-            state.curr = conn;
+            // adjust curr pointer
+            if (state.curr > 0 && i <= state.curr) state.curr--;
+        },
+        update (state, { i, conn }) {
+            state.conns.splice(i, 1, conn);
+        },
+        activate (state, i) {
+            state.curr = i;
         }
     },
     actions: {
-        add (context, conn) {
-            // auto activate if it's the first/only connection
-            if (!context.state.curr) {
-                conn.active = true;
-                context.state.curr = conn;
-            }
+        add (context, { conn }) {
             context.commit('add', conn);
-            db.connections.save(context.state);
+            save(context.state);
         },
-        remove (context, i) {
-            context.commit('remove', i);
-            db.connections.save(context.state);
+        remove (context, data) {
+            context.commit('remove', data);
+            save(context.state);
         },
-        activate (context, conn) {
-            context.commit('activate', conn);
-            db.connections.save(context.state);
+        update (context, data) {
+            context.commit('update', data);
+            save(context.state);
+        },
+        activate (context, data) {
+            context.commit('activate', data);
+            save(context.state);
         },
         save (context) {
-            db.connections.save(context.state);
+            save(context.state);
         },
         init (context) {
             // load connections from db into memory
