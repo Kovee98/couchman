@@ -48,58 +48,62 @@ export default {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
+    #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
     }
-  }
-}
 
-.capitalize {
-    text-transform: capitalize;
-}
+    #nav {
+    padding: 30px;
 
-.clickable {
-    cursor: pointer;
-}
+    a {
+        font-weight: bold;
+        color: #2c3e50;
 
-.update {
-    cursor: pointer;
-    display: inline;
-    :hover {
-        color: black;
+        &.router-link-exact-active {
+        color: #42b983;
+        }
     }
-}
-
-.remove {
-    cursor: pointer;
-    display: inline;
-    :hover {
-        color: red;
     }
-}
 
-.truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    .capitalize {
+        text-transform: capitalize;
+    }
 
-.actions {
-    width: 100px;
-}
+    .clickable {
+        cursor: pointer;
+    }
 
+    .update {
+        cursor: pointer;
+        display: inline;
+        :hover {
+            color: black;
+        }
+    }
+
+    .remove {
+        cursor: pointer;
+        display: inline;
+        :hover {
+            color: red;
+        }
+    }
+
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .actions {
+        width: 100px;
+    }
+
+    .tr:hover > .td {
+        cursor: pointer;
+        color: #007bff !important;
+    }
 </style>
