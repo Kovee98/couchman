@@ -10,13 +10,14 @@
                         id="input-group-1"
                         label="Name"
                         label-for="input-1"
-                        description="Name this connection. Must be unique."
+                        description="Name this connection"
                     >
                         <b-form-input
                             id="input-1"
                             v-model="form.name"
                             required
                             placeholder="Connection 1"
+                            trim
                         ></b-form-input>
                     </b-form-group>
 
@@ -24,13 +25,15 @@
                         id="input-group-2"
                         label="URL"
                         label-for="input-2"
-                        description="The url for the running db instance"
+                        description="The url for the server"
                     >
                         <b-form-input
                             id="input-2"
                             v-model="form.url"
+                            type="url"
                             required
                             placeholder="http://localhost:5984"
+                            trim
                         ></b-form-input>
                     </b-form-group>
 
@@ -38,6 +41,7 @@
                         <b-form-input
                             id="input-3"
                             v-model="form.user"
+                            trim
                         ></b-form-input>
                     </b-form-group>
 
@@ -46,6 +50,7 @@
                             id="input-4"
                             v-model="form.pass"
                             type="password"
+                            trim
                         ></b-form-input>
                     </b-form-group>
                 </b-form>
