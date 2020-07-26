@@ -1,24 +1,15 @@
 <template>
     <div>
-        <b-modal id="confirm" :title="title">
+        <b-modal
+            v-model="show"
+            :title="title"
+            :ok-title="confirm.text"
+            :ok-variant="confirm.variant"
+            :cancel-title="cancel.text"
+            :cancel-variant="cancel.variant"
+            @ok="confirm.action"
+        >
             <p>{{body}}</p>
-
-            <template v-slot:modal-footer>
-                <div>
-                    <b-button
-                        :variant="cancel.variant"
-                        @click="cancel.action"
-                    >
-                        {{cancel.text}}
-                    </b-button>
-                    <b-button
-                        :variant="confirm.variant"
-                        @click="confirm.action"
-                    >
-                        {{confirm.text}}
-                    </b-button>
-                </div>
-            </template>
         </b-modal>
     </div>
 </template>
@@ -28,21 +19,18 @@ export default {
     name: 'Confirmation',
     data () {
         return {
-            title: 'Sample title',
+            show: false,
+            title: 'Are You Sure?',
             body: 'Sample body',
             cancel: {
                 text: 'Cancel',
-                variant: 'secondary',
-                action: () => {
-                    this.$bvModal.hide('confirm');
-                }
+                variant: 'outline-secondary',
+                action: () => {}
             },
             confirm: {
                 text: 'Confirm',
                 variant: 'danger',
-                action: () => {
-                    this.$bvModal.hide('confirm');
-                }
+                action: () => {}
             }
         };
     },
@@ -60,10 +48,9 @@ export default {
             this.confirm.variant = (data.confirm || {}).variant || this.confirm.variant;
             this.confirm.action = () => {
                 (data.confirm || {}).action ? data.confirm.action() : this.confirm.action();
-                this.$bvModal.hide('confirm');
             };
 
-            this.$bvModal.show('confirm');
+            this.show = true;
         });
     }
 };
