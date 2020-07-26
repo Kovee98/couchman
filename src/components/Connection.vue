@@ -118,14 +118,16 @@ export default {
             return invalid;
         },
         getConn (form) {
-            let url = this.form.url;
-            if (url && this.form.user && this.form.pass) {
-                url = url.split('//');
+            let baseUrl = this.form.url;
+            let url = baseUrl;
+            if (baseUrl && this.form.user && this.form.pass) {
+                url = baseUrl.split('//');
                 url = `${url[0]}//${this.form.user}:${this.form.pass}@${url[1]}`;
             }
 
             return Object.assign(this.conn || {}, {
                 name: this.form.name,
+                baseUrl: baseUrl,
                 url: url,
                 user: this.form.user,
                 pass: this.form.pass
