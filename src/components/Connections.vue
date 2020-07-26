@@ -67,13 +67,18 @@ export default {
         },
         remove (i, conn) {
             this.$events.$emit('confirm', {
-                title: 'Delete Connection',
-                body: `Are you sure you want to delete the ${conn.name} connection? This can't be undone.`,
+                title: 'Delete Connection?',
+                body: `Deleting "${conn.name}" will be permanent and cannot be undone.`,
                 confirm: {
-                    text: 'Delete',
+                    text: 'Yes, delete connection',
+                    variant: 'danger',
                     action: () => {
                         this.$store.dispatch('connections/remove', i);
                     }
+                },
+                cancel: {
+                    text: 'No, keep connection',
+                    variant: 'outline-secondary'
                 }
             });
         }

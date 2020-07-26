@@ -1,6 +1,7 @@
 <template>
     <div>
-        <b-form-input v-model="filter" placeholder="Filter docs..." class="my-3"></b-form-input>
+        <b-form-input v-model="view" type="search" placeholder="Create view..." class="my-3"></b-form-input>
+        <b-form-input v-model="filter" type="search" placeholder="Filter docs..." class="my-3"></b-form-input>
         <b-table
             :items="docs"
             :fields="fields"
@@ -49,17 +50,22 @@ export default {
         },
         remove (row) {
             this.$events.$emit('confirm', {
-                title: 'Delete Document',
-                body: 'Are you sure you want to delete this document? This can\'t be undone.',
+                title: 'Delete Document?',
+                body: `Deleting "${row.item._id}" will be permanent and cannot be undone.`,
                 confirm: {
-                    text: 'Delete',
+                    text: 'Yes, delete document',
+                    variant: 'danger',
                     action: () => {
-                        this.$axios.delete(`${this.curr.url}/${row.item.name}`).catch((err) => {
+                        this.$axios.delete(`${this.curr.url}/${row.item._id}`).catch((err) => {
                             console.log('err:', err);
                         }).finally(() => {
                             this.refresh();
                         });
                     }
+                },
+                cancel: {
+                    text: 'No, keep document',
+                    variant: 'outline-secondary'
                 }
             });
         },

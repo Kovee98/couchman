@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-form-input v-model="filter" placeholder="Filter dbs..." class="my-3"></b-form-input>
+        <b-form-input v-model="filter" type="search" placeholder="Filter dbs..." class="my-3"></b-form-input>
         <b-table
             :items="dbs"
             :fields="fields"
@@ -83,10 +83,11 @@ export default {
         remove (row) {
             let currConn = this.conns[this.curr];
             this.$events.$emit('confirm', {
-                title: 'Delete DB',
-                body: `Are you sure you want to delete the ${row.item.name} database? This can't be undone.`,
+                title: 'Delete Database?',
+                body: `Deleting "${row.item.name}" will be permanent and cannot be undone.`,
                 confirm: {
-                    text: 'Delete',
+                    text: 'Yes, delete database',
+                    variant: 'danger',
                     action: () => {
                         this.$axios.delete(`${currConn.url}/${row.item.name}`).catch((err) => {
                             console.log('err:', err);
@@ -94,6 +95,10 @@ export default {
                             this.refresh();
                         });
                     }
+                },
+                cancel: {
+                    text: 'No, keep database',
+                    variant: 'outline-secondary'
                 }
             });
         },
