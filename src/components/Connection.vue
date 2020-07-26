@@ -58,6 +58,17 @@
 
             <template v-slot:modal-footer>
                 <div>
+                    <b-overlay :show="isTesting" rounded="sm">
+                        <b-button class="capitalize" :variant="testResult" @click="test">
+                            Test
+                            <span v-if="isValid !== null">
+                                <span v-if="isValid" class="text-success"><b-icon-check/></span>
+                                <span v-if="!isValid" class="text-danger"><b-icon-exclamation/></span>
+                            </span>
+                        </b-button>
+                    </b-overlay>
+                </div>
+                <div>
                     <b-button class="capitalize" variant="success" @click="submit">
                         {{action}}
                     </b-button>
@@ -79,8 +90,21 @@ export default {
                 url: '',
                 user: '',
                 pass: ''
-            }
+            },
+            isTesting: false,
+            isValid: null
         };
+    },
+    computed: {
+        testResult () {
+            if (this.isValid === null) {
+                return 'outline-info';
+            } else if (this.isValid) {
+                return 'outline-success';
+            } else {
+                return 'outline-danger';
+            }
+        }
     },
     methods: {
         submit: function () {
@@ -132,6 +156,20 @@ export default {
                 user: this.form.user,
                 pass: this.form.pass
             });
+        },
+        test () {
+            console.log('testing...');
+            let conn = this.getConn();
+            this.isValid = null;
+            this.isTesting = true;
+
+            this.$axios.get(conn.url).then(() => {
+                this.isValid = true;
+            }).catch(() => {
+                this.isValid = false;
+            }).finally(() => {
+                this.isTesting = false;
+            });
         }
     },
     created () {
@@ -139,6 +177,7 @@ export default {
             this.action = 'add';
             this.conn = {};
             this.index = -1;
+            this.isValid = null;
 
             this.form.name = '';
             this.form.url = '';
@@ -152,6 +191,7 @@ export default {
             this.action = 'update';
             this.conn = conn || {};
             this.index = i;
+            this.isValid = null;
 
             this.form.name = conn.name || '';
             this.form.url = conn.url || '';
