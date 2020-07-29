@@ -56,7 +56,6 @@ export default {
                 if (data) {
                     context.state.conns = data.conns;
                     context.state.curr = data.curr;
-                    context.state.id = data.id;
                 }
             });
         }
