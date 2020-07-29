@@ -1,10 +1,52 @@
 <template>
-    <div>
-        <b-form-input v-model="view" type="search" placeholder="Create view..." class="my-3"></b-form-input>
-        <b-form-input v-model="filter" type="search" placeholder="Filter docs..." class="my-3"></b-form-input>
+    <div class="mt-4">
+        <b-button-group class="my-3">
+            <b-dropdown
+                id="view-dropdown"
+                variant="primary"
+            >
+                <template v-slot:button-content>
+                    <b-icon-eye />
+                    {{buttonName}}
+                </template>
+                <b-dropdown-item
+                    @click="activate(-1)"
+                    :active="currView === -1"
+                >
+                    None
+                </b-dropdown-item>
+                <b-dropdown-item
+                    v-for="(view, i) in views"
+                    :key="view.id"
+                    :value="view"
+                    @click="activate(i)"
+                    :active="currView === i"
+                >
+                    {{view.name}}
+                    <span class="float-right">
+                        <div class="remove" @click.stop="removeView(i)"><b-icon-trash font-scale="0.99"/></div>
+                    </span>
+                </b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item v-b-modal.views>
+                    Create View
+                    <b-icon-plus-circle class="ml-2" font-scale="0.99"/>
+                </b-dropdown-item>
+            </b-dropdown>
+            <b-button v-b-toggle.filter-collapse variant="primary">
+                <b-icon-funnel />
+                Filter
+            </b-button>
+        </b-button-group>
+        <b-collapse id="filter-collapse" class="mb-3">
+            <b-card>
+                <b-form-input v-model="filter" type="search" placeholder="Filter docs..."></b-form-input>
+            </b-card>
+        </b-collapse>
+
         <b-table
             :items="docs"
-            :fields="fields"
+            :fields="filteredFields"
             :filter="filter"
             outlined
             striped
@@ -21,18 +63,26 @@
                 </span>
             </template>
         </b-table>
+        <Views/>
     </div>
 </template>
 
 <script>
+import Views from '../components/Views';
+
 export default {
     props: ['curr', 'conns'],
     name: 'Databases',
+    components: {
+        Views
+    },
     data: function () {
         return {
             filter: '',
             docs: [],
             fields: [],
+            filteredFields: [],
+            cols: [],
             loading: false
         };
     },
@@ -42,9 +92,38 @@ export default {
         },
         conns: function () {
             this.refresh();
+        },
+        currView: function () {
+            this.filterFields();
+        }
+    },
+    computed: {
+        views () {
+            return this.$store.getters['views/views'];
+        },
+        currView () {
+            return this.$store.getters['views/curr'];
+        },
+        buttonName () {
+            if (this.views && this.currView >= 0) {
+                let view = this.views[this.currView];
+                return view ? view.name : 'None';
+            }
+            return 'None';
         }
     },
     methods: {
+        filterFields () {
+            if (this.currView >= 0 && this.views.length > 0) {
+                let cols = this.views[this.currView].cols;
+                this.filteredFields = this.fields.filter(field => cols.includes(field.key));
+            } else {
+                this.filteredFields = this.fields;
+            }
+        },
+        activate (i, view) {
+            this.$store.dispatch('views/activate', i);
+        },
         edit (doc) {
             this.$router.push({ name: this.$route.name, query: { doc: doc._id } });
         },
@@ -69,6 +148,9 @@ export default {
                 }
             });
         },
+        removeView (i) {
+            this.$store.dispatch('views/remove', i);
+        },
         refresh () {
             this.loading = true;
             let currConn = this.conns[this.curr];
@@ -77,6 +159,7 @@ export default {
                     this.docs = data.rows.map(row => row.doc);
 
                     let fields = Object.keys(this.docs[0]);
+                    this.keys = fields;
                     fields = fields.map((field) => {
                         return {
                             key: field,
@@ -90,6 +173,7 @@ export default {
                         class: 'actions'
                     });
                     this.fields = fields;
+                    this.filterFields();
                 }).catch((err) => {
                     console.log(err);
                 }).finally(() => {

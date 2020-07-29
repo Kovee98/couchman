@@ -47,6 +47,7 @@ export default {
     },
     created () {
         this.$store.dispatch('connections/init');
+        this.$store.dispatch('views/init');
     }
 };
 </script>

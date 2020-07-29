@@ -46,6 +46,11 @@ let dbs = {
         name: 'couchman',
         storeName: 'connections',
         description: 'List of user-added db connections'
+    }),
+    views: createDB({
+        name: 'couchman',
+        storeName: 'views',
+        description: 'List of user-added views'
     })
 };
 

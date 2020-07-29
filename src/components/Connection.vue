@@ -7,13 +7,13 @@
             <div class="d-block">
                 <b-form>
                     <b-form-group
-                        id="input-group-1"
+                        id="conn-name-group"
                         label="Name"
-                        label-for="input-1"
+                        label-for="conn-name"
                         description="Name this connection"
                     >
                         <b-form-input
-                            id="input-1"
+                            id="conn-name"
                             v-model="form.name"
                             required
                             placeholder="Connection 1"
@@ -22,13 +22,13 @@
                     </b-form-group>
 
                     <b-form-group
-                        id="input-group-2"
+                        id="conn-url-group"
                         label="URL"
-                        label-for="input-2"
+                        label-for="conn-url"
                         description="The url for the server"
                     >
                         <b-form-input
-                            id="input-2"
+                            id="conn-url"
                             v-model="form.url"
                             type="url"
                             required
@@ -37,17 +37,25 @@
                         ></b-form-input>
                     </b-form-group>
 
-                    <b-form-group id="input-group-3" label="Username" label-for="input-2">
+                    <b-form-group
+                        id="conn-user-group"
+                        label="Username"
+                        label-for="conn-user"
+                    >
                         <b-form-input
-                            id="input-3"
+                            id="conn-user"
                             v-model="form.user"
                             trim
                         ></b-form-input>
                     </b-form-group>
 
-                    <b-form-group id="input-group-4" label="Password" label-for="input-3">
+                    <b-form-group
+                        id="conn-pass-group"
+                        label="Password"
+                        label-for="conn-pass"
+                    >
                         <b-form-input
-                            id="input-4"
+                            id="conn-pass"
                             v-model="form.pass"
                             type="password"
                             trim
