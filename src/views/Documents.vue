@@ -88,10 +88,10 @@ export default {
     },
     watch: {
         curr: function () {
-            this.refresh();
+            this.load();
         },
         conns: function () {
-            this.refresh();
+            this.load();
         },
         currView: function () {
             this.filterFields();
@@ -159,7 +159,7 @@ export default {
         removeView (i) {
             this.$store.dispatch('views/remove', i);
         },
-        refresh () {
+        load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
             if (currConn && currConn.url && this.$route.params.db) {
@@ -191,9 +191,9 @@ export default {
         }
     },
     mounted () {
-        this.refresh();
+        this.load();
         this.$events.$on('refresh', (e) => {
-            this.refresh();
+            this.load();
         });
     }
 };

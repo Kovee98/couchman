@@ -70,10 +70,10 @@ export default {
     },
     watch: {
         curr: function () {
-            this.refresh();
+            this.load();
         },
         conns: function () {
-            this.refresh();
+            this.load();
         }
     },
     methods: {
@@ -97,7 +97,7 @@ export default {
                             });
                             console.log(err);
                         }).finally(() => {
-                            this.refresh();
+                            this.load();
                         });
                     }
                 },
@@ -107,7 +107,7 @@ export default {
                 }
             });
         },
-        refresh () {
+        load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
             if (currConn && currConn.url) {
@@ -136,9 +136,9 @@ export default {
         }
     },
     mounted () {
-        this.refresh();
+        this.load();
         this.$events.$on('refresh', (e) => {
-            this.refresh();
+            this.load();
         });
     }
 };
