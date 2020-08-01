@@ -1,14 +1,5 @@
 <template>
-    <b-modal
-        v-model="show"
-        size="xl"
-        title="Document"
-        ok-title="Save"
-        cancel-title="Cancel"
-        @ok="save"
-        @hidden="cancel"
-        @show="refresh"
-    >
+    <div class="mt-4">
         <b-overlay :show="loading" rounded="sm">
             <codemirror
                 v-model="doc"
@@ -16,7 +7,12 @@
                 ref="editor"
             />
         </b-overlay>
-    </b-modal>
+
+        <span class="float-right">
+            <b-button variant="outline-secondary" @click="cancel">Cancel</b-button>
+            <b-button variant="primary" @click="save" class="ml-2">Save</b-button>
+        </span>
+    </div>
 </template>
 
 <script>
@@ -29,6 +25,7 @@ export default {
     },
     data () {
         return {
+            show: false,
             doc: '',
             opts: {
                 tabSize: 2,
@@ -53,10 +50,17 @@ export default {
 
             this.loading = true;
             let currConn = this.conns[this.curr];
-            if (currConn && currConn.url && this.$route.query.doc) {
-                this.$axios.put(`${currConn.url}/${this.$route.params.db}/${this.$route.query.doc}`, doc).then((res) => {
-                    this.$events.$emit('refresh');
+            if (currConn && currConn.url && this.$route.params.doc) {
+                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+                this.$http.put(url, currConn.user, currConn.pass, {
+                    body: JSON.stringify(doc)
+                }).then((res) => {
+                    this.$router.go(-1);
                 }).catch((err) => {
+                    this.$events.$emit('alert-open', {
+                        variant: 'danger',
+                        msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                    });
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -64,15 +68,22 @@ export default {
             }
         },
         cancel () {
-            this.$router.push({ name: this.$route.name, query: {} });
+            this.$router.go(-1);
         },
-        refresh () {
+        load () {
             this.loading = true;
+            this.doc = '';
             let currConn = this.conns[this.curr];
-            if (currConn && currConn.url && this.$route.query.doc) {
-                this.$axios.get(`${currConn.url}/${this.$route.params.db}/${this.$route.query.doc}`).then(({ data }) => {
+            if (currConn && currConn.url && this.$route.params.doc) {
+                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+                this.$http.get(url, currConn.user, currConn.pass).then((data) => {
                     this.doc = JSON.stringify(data, null, 4);
+                    this.show = true;
                 }).catch((err) => {
+                    this.$events.$emit('alert-open', {
+                        variant: 'danger',
+                        msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                    });
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -82,26 +93,21 @@ export default {
     },
     watch: {
         curr () {
-            this.refresh();
+            this.load();
         },
         conns () {
-            this.refresh();
+            this.load();
         }
     },
     computed: {
         codemirror () {
             return this.$refs.editor.codemirror;
-        },
-        show: {
-            get () {
-                return !!this.$route.query.doc;
-            },
-            set () {}
         }
     },
     mounted () {
+        this.load();
         this.$events.$on('refresh', (e) => {
-            this.refresh();
+            this.load();
         });
     }
 };
