@@ -125,7 +125,7 @@ export default {
             this.$store.dispatch('views/activate', i);
         },
         edit (doc) {
-            this.$router.push({ name: this.$route.name, query: { doc: doc._id } });
+            this.$router.push(`${this.$route.fullPath}/${doc._id}`);
         },
         remove (row) {
             let currConn = this.conns[this.curr];
