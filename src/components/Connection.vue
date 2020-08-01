@@ -149,7 +149,7 @@ export default {
 
             return invalid;
         },
-        getConn (form) {
+        getConn () {
             let baseUrl = this.form.url;
             let url = baseUrl;
             if (baseUrl && this.form.user && this.form.pass) {
