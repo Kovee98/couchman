@@ -1,23 +1,15 @@
 let format = {
-    size: (size) => {
-        let n = 0;
-        while (size > 999) {
-            size *= 0.1;
-            n++;
-        }
+    bytes: (bytes, decimals = 1) => {
+        if (bytes === 0) return '0 B';
 
-        return `${size.toFixed(1)} ${suffix(n)}B`;
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 };
-
-function suffix (n) {
-    switch (n) {
-    case 1: return 'K';
-    case 2: return 'M';
-    case 3: return 'G';
-    case 4: return 'T';
-    default: return '';
-    };
-}
 
 export default format;
