@@ -7,7 +7,7 @@
             >
                 <template v-slot:button-content>
                     <b-icon-eye />
-                    {{buttonName}}
+                    {{viewName}}
                 </template>
                 <b-dropdown-item
                     @click="activate(-1)"
@@ -104,7 +104,7 @@ export default {
         currView () {
             return this.$store.getters['views/curr'];
         },
-        buttonName () {
+        viewName () {
             if (this.views && this.currView >= 0) {
                 let view = this.views[this.currView];
                 return view ? view.name : 'None';
