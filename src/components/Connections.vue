@@ -22,7 +22,7 @@
                         >
                             <div class="row">
                                 <span class="text-truncate col-4">{{conn.name}}</span>
-                                <span class="text-muted text-truncate col-5 px-0">{{conn.url}}</span>
+                                <span class="text-muted text-truncate col-5 px-0">{{conn.baseUrl}}</span>
                                 <span class="col-2 px-0 ml-3">
                                     <div class="update pl-2" @click.stop="update(i, conn)"><b-icon-pencil font-scale="1.125"/></div>
                                     <div class="remove pl-2" @click.stop="remove(i, conn)"><b-icon-trash font-scale="1.125"/></div>
