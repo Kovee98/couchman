@@ -103,6 +103,12 @@ export default {
         text-overflow: ellipsis;
     }
 
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .actions {
         width: 100px;
     }
