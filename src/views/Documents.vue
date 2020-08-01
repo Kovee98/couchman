@@ -116,10 +116,20 @@ export default {
         filterFields () {
             if (this.currView >= 0 && this.views.length > 0) {
                 let cols = this.views[this.currView].cols;
-                this.filteredFields = this.fields.filter(field => cols.includes(field.key));
+                var filteredFields = this.fields.filter(field => cols.includes(field.key));
             } else {
-                this.filteredFields = this.fields;
+                filteredFields = this.fields;
             }
+
+            if (filteredFields.length > 0) {
+                filteredFields.push({
+                    key: 'actions',
+                    label: '',
+                    class: 'actions'
+                });
+            }
+
+            this.filteredFields = filteredFields;
         },
         activate (i, view) {
             this.$store.dispatch('views/activate', i);
@@ -175,11 +185,7 @@ export default {
                             class: 'truncate td'
                         };
                     });
-                    fields.push({
-                        key: 'actions',
-                        label: '',
-                        class: 'actions'
-                    });
+
                     this.fields = fields;
                     this.filterFields();
                 }).catch((err) => {

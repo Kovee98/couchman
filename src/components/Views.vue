@@ -10,23 +10,24 @@
             <template v-slot:modal-title class="capitalize">
                 <span class="capitalize">Create View</span>
             </template>
-            <b-form @submit.prevent="addCol">
-                <b-form-group
-                    id="view-name-group"
-                    label="Name"
-                    label-for="view-name"
-                    description="Name this view"
-                >
-                    <b-form-input
-                        id="view-name"
-                        v-model="name"
-                        type="search"
-                        required
-                        placeholder="View 1"
-                        trim
-                    ></b-form-input>
-                </b-form-group>
 
+            <b-form-group
+                id="view-name-group"
+                label="Name"
+                label-for="view-name"
+                description="Name this view"
+            >
+                <b-form-input
+                    id="view-name"
+                    v-model="name"
+                    type="search"
+                    required
+                    placeholder="View 1"
+                    trim
+                ></b-form-input>
+            </b-form-group>
+
+            <b-form @submit.prevent="addCol">
                 <b-form-group
                     id="view-cols-group"
                     label="Columns"
@@ -47,7 +48,7 @@
                         <b-badge v-for="(col, i) in cols" :key="col.id" class="mr-2">
                             {{col}}
                             <span class="clickable">
-                                <b-icon-x @click="removeCol(i)" />
+                                <b-icon-trash font-scale="0.8" class="ml-2" @click="removeCol(i)" />
                             </span>
                         </b-badge>
                     </h4>
@@ -86,7 +87,7 @@ export default {
         reset () {
             this.name = '';
             this.col = '';
-            this.cols = ['age', 'name', 'animal'];
+            this.cols = [];
         }
     }
 };
