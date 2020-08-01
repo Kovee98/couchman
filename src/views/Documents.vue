@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Views from '../components/Views';
+import Views from '@/components/Views';
 
 export default {
     props: ['curr', 'conns'],
