@@ -128,25 +128,33 @@ export default {
             this.$router.push({ name: this.$route.name, query: { doc: doc._id } });
         },
         remove (row) {
-            this.$events.$emit('confirm', {
-                title: 'Delete Document?',
-                body: `Deleting "${row.item._id}" will be permanent and cannot be undone.`,
-                confirm: {
-                    text: 'Yes, delete document',
-                    variant: 'danger',
-                    action: () => {
-                        this.$axios.delete(`${this.curr.url}/${row.item._id}`).catch((err) => {
-                            console.log('err:', err);
-                        }).finally(() => {
-                            this.refresh();
-                        });
+            let currConn = this.conns[this.curr];
+            if (currConn && currConn.url) {
+                this.$events.$emit('confirm', {
+                    title: 'Delete Document?',
+                    body: `Deleting "${row.item._id}" will be permanent and cannot be undone.`,
+                    confirm: {
+                        text: 'Yes, delete document',
+                        variant: 'danger',
+                        action: () => {
+                            let url = `${currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
+                            this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                                this.$events.$emit('alert-open', {
+                                    variant: 'danger',
+                                    msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                                });
+                                console.log('err:', err);
+                            }).finally(() => {
+                                this.load();
+                            });
+                        }
+                    },
+                    cancel: {
+                        text: 'No, keep document',
+                        variant: 'outline-secondary'
                     }
-                },
-                cancel: {
-                    text: 'No, keep document',
-                    variant: 'outline-secondary'
-                }
-            });
+                });
+            }
         },
         removeView (i) {
             this.$store.dispatch('views/remove', i);
@@ -154,12 +162,12 @@ export default {
         refresh () {
             this.loading = true;
             let currConn = this.conns[this.curr];
-            if (currConn && currConn.url) {
-                this.$axios.get(`${currConn.url}/${this.$route.params.db}/_all_docs?include_docs=true`).then(({ data }) => {
+            if (currConn && currConn.url && this.$route.params.db) {
+                let url = `${currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
+                this.$http.get(url, currConn.user, currConn.pass).then((data) => {
                     this.docs = data.rows.map(row => row.doc);
 
                     let fields = Object.keys(this.docs[0]);
-                    this.keys = fields;
                     fields = fields.map((field) => {
                         return {
                             key: field,

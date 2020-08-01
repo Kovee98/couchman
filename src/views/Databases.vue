@@ -89,8 +89,13 @@ export default {
                     text: 'Yes, delete database',
                     variant: 'danger',
                     action: () => {
-                        this.$axios.delete(`${currConn.url}/${row.item.name}`).catch((err) => {
-                            console.log('err:', err);
+                        let url = `${currConn.baseUrl}/${row.item.name}`;
+                        this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                            this.$events.$emit('alert-open', {
+                                variant: 'danger',
+                                msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                            });
+                            console.log(err);
                         }).finally(() => {
                             this.refresh();
                         });
@@ -106,19 +111,19 @@ export default {
             this.loading = true;
             let currConn = this.conns[this.curr];
             if (currConn && currConn.url) {
-                this.$axios.get(`${currConn.url}/_all_dbs`).then(({ data }) => {
+                this.$http.get(`${currConn.baseUrl}/_all_dbs`, currConn.user, currConn.pass).then((dbs) => {
                     let queued = [];
-                    data.forEach((db) => {
-                        queued.push(this.$axios.get(`${currConn.url}/${db}`).then(db => db.data));
+                    dbs.forEach((db) => {
+                        queued.push(this.$http.get(`${currConn.baseUrl}/${db}`, currConn.user, currConn.pass));
                     });
 
                     Promise.all(queued).then((dbs) => {
                         this.dbs = dbs.map((db) => {
                             return {
                                 name: db.db_name,
-                                doc_count: db.doc_count,
-                                adapter: db.adapter,
-                                size: db.disk_size
+                                // TODO: which size to use for couchdb servers?
+                                size: db.disk_size || db.sizes.file,
+                                doc_count: db.doc_count
                             };
                         });
                     });

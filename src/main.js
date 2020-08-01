@@ -2,7 +2,6 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import axios from 'axios';
 import events from './js/events';
 
 // bootstrap dependencies
@@ -22,9 +21,10 @@ import 'codemirror/addon/selection/active-line.js';
 Vue.use(VueCodemirror);
 
 // general globals
+import http from './js/http.js';
 Vue.use({
     install (Vue) {
-        Vue.prototype.$axios = axios;
+        Vue.prototype.$http = http;
         Vue.prototype.$events = events;
     }
 });

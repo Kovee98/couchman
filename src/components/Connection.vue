@@ -166,12 +166,11 @@ export default {
             });
         },
         test () {
-            console.log('testing...');
             let conn = this.getConn();
             this.isValid = null;
             this.isTesting = true;
 
-            this.$axios.get(conn.url).then(() => {
+            this.$http.get(conn.baseUrl, conn.user, conn.pass).then(() => {
                 this.isValid = true;
             }).catch(() => {
                 this.isValid = false;
