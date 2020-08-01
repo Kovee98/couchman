@@ -3,7 +3,7 @@
 
 This project set out to accomplish a handful of core features:
 - Switching between multiple instances for easier management
-- Searching/filtering/sorting to make document management as easy as possible
+- Filtering/sorting to make document management as easy as possible
 - A simple view system that's intuitive to use
 
 ## Security
