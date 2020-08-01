@@ -128,6 +128,10 @@ export default {
                         });
                     });
                 }).catch((err) => {
+                    this.$events.$emit('alert-open', {
+                        variant: 'danger',
+                        msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                    });
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
