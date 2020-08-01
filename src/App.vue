@@ -4,18 +4,23 @@
         <Confirmation/>
         <Navbar :curr="curr" :conns="conns" />
         <b-container>
-            <div class="pt-3">
-                <span v-if="this.$route.params.db">
-                    <span class="h4 py-2 my-3"><b-link href="/#/dbs">Databases</b-link></span>
-                </span>
-                <span v-if="!this.$route.params.db">
-                    <span class="h4 py-2 my-3">Databases</span>
-                </span>
-                <span v-if="this.$route.params.db">
-                    <b-icon-chevron-left class="mx-2" font-scale="1.125"/>
-                    <span class="h4 py-2 my-3">{{this.$route.params.db}}</span>
-                </span>
-            </div>
+            <b-breadcrumb class="px-0 my-4 h5">
+                <b-breadcrumb-item href="/#/dbs">Databases</b-breadcrumb-item>
+                <b-breadcrumb-item
+                    v-if="$route.params.db"
+                    :href="`/#/dbs/${$route.params.db}`"
+                    :active="!!$route.params.db && !$route.params.doc"
+                >
+                    {{$route.params.db}}
+                </b-breadcrumb-item>
+                <b-breadcrumb-item
+                    v-if="$route.params.doc"
+                    :href="`/#/dbs/${$route.params.db}/${$route.params.doc}`"
+                    :active="!!$route.params.doc"
+                >
+                    {{$route.params.doc}}
+                </b-breadcrumb-item>
+            </b-breadcrumb>
             <router-view :curr="curr" :conns="conns" />
         </b-container>
     </div>
@@ -113,5 +118,9 @@ export default {
     .tr:hover > .td {
         cursor: pointer;
         color: #007bff !important;
+    }
+
+    .breadcrumb {
+        background: transparent !important;
     }
 </style>
