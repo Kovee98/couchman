@@ -1,5 +1,5 @@
-// import Vue from 'vue';
 import db from '../../js/db';
+import router from '../../router';
 
 const save = db.connections.save;
 
@@ -46,6 +46,11 @@ export default {
         activate (context, data) {
             context.commit('activate', data);
             save(context.state);
+
+            // start at /dbs for activated conn
+            if (router.app.$route.params.db) {
+                router.push('/dbs');
+            }
         },
         save (context) {
             save(context.state);
