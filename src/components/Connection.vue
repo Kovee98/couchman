@@ -202,7 +202,7 @@ export default {
             this.isValid = null;
 
             this.form.name = conn.name || '';
-            this.form.url = conn.url || '';
+            this.form.url = conn.baseUrl || '';
             this.form.user = conn.user || '';
             this.form.pass = conn.pass || '';
 
