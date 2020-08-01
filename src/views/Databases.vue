@@ -55,7 +55,7 @@ export default {
                 {
                     key: 'size',
                     label: 'Size',
-                    formatter: format.size,
+                    formatter: format.bytes,
                     sortable: true,
                     class: 'truncate td'
                 },
