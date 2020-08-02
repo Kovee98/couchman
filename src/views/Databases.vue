@@ -117,6 +117,7 @@ export default {
         load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
+
             if (currConn && currConn.url) {
                 this.$http.get(`${currConn.baseUrl}/_all_dbs`, currConn.user, currConn.pass).then((dbs) => {
                     let queued = [];
@@ -133,6 +134,13 @@ export default {
                                 doc_count: db.doc_count
                             };
                         });
+                    }).catch((err) => {
+                        this.$events.$emit('alert-open', {
+                            variant: 'danger',
+                            msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                        });
+
+                        console.log(err);
                     });
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {
