@@ -48,14 +48,14 @@
             :items="docs"
             :fields="filteredFields"
             :filter="filter"
-            outlined
-            striped
-            fixed
+            :per-page="perPage"
+            :current-page="currPage"
             tbody-tr-class="tr"
             head-variant="dark"
             table-variant="light"
             :busy="loading"
             @row-clicked="edit"
+            @filtered="updateNumPages"
         >
             <template v-slot:cell(actions)="row">
                 <span class="float-right">
@@ -63,22 +63,27 @@
                 </span>
             </template>
         </b-table>
-        <Views/>
+        <Pagination :currPage="currPage" :numPages="numPages" />
     </div>
 </template>
 
 <script>
 import Views from '@/components/Views';
+import Pagination from '@/components/Pagination';
 
 export default {
     props: ['curr', 'conns'],
     name: 'Databases',
     components: {
-        Views
+        Views,
+        Pagination
     },
     data: function () {
         return {
             filter: '',
+            perPage: 5,
+            currPage: 1,
+            numPages: 0,
             docs: [],
             fields: [],
             filteredFields: [],
@@ -113,6 +118,17 @@ export default {
         }
     },
     methods: {
+        updateNumPages (items = [], count = 0) {
+            let rem = count % this.perPage;
+            let numPages = Math.floor(count / this.perPage);
+            this.numPages = rem > 0 ? numPages + 1 : numPages;
+
+            if (this.currPage > this.numPages) {
+                this.currPage = this.numPages;
+            } else if (this.currPage === 0) {
+                this.currPage = 1;
+            }
+        },
         filterFields () {
             if (this.currView >= 0 && this.views.length > 0) {
                 let cols = this.views[this.currView].cols;
@@ -177,6 +193,9 @@ export default {
                 this.$http.get(url, currConn.user, currConn.pass).then((data) => {
                     this.docs = data.rows.map(row => row.doc);
 
+                    // update pagination
+                    this.updateNumPages(null, this.docs.length);
+
                     let fields = Object.keys(this.docs[0]);
                     fields = fields.map((field) => {
                         return {
@@ -204,6 +223,10 @@ export default {
         this.load();
         this.$events.$on('refresh', (e) => {
             this.load();
+        });
+
+        this.$events.$on('set-curr-page', (currPage) => {
+            this.currPage = currPage;
         });
     }
 };
