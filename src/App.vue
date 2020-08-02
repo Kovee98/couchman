@@ -28,19 +28,19 @@
 <script>
 // @ is an alias to /src
 import TitleBar from '@/components/TitleBar.vue';
-import ConfirmationModal from '@/components/ConfirmationModal.vue';
 import AlertMessage from '@/components/AlertMessage.vue';
-import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue';
+import ConfirmationModal from '@/components/ConfirmationModal.vue';
 import ConnectionSidebar from '@/components/ConnectionSidebar.vue';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue';
 
 export default {
     name: 'App',
     components: {
         TitleBar,
-        ConfirmationModal,
         AlertMessage,
-        BreadcrumbNavigation,
-        ConnectionSidebar
+        ConfirmationModal,
+        ConnectionSidebar,
+        BreadcrumbNavigation
     },
     computed: {
         curr () {
