@@ -6,7 +6,10 @@
             placeholder="Filter dbs..."
             class="my-3"
         />
-        <div class="mb-3" style="height: 550px">
+        <div
+            class="mb-3"
+            style="height: 550px"
+        >
             <b-table
                 :items="dbs"
                 :fields="fields"
@@ -25,28 +28,44 @@
             >
                 <template v-slot:cell(actions)="row">
                     <span class="float-right">
-                        <div class="remove pl-2" @click.stop="remove(row)">
-                            <b-icon-trash font-scale="1.125" />
+                        <div
+                            class="remove pl-2"
+                            @click.stop="remove(row)"
+                        >
+                            <b-icon-trash font-scale="1.125"/>
                         </div>
                     </span>
                 </template>
             </b-table>
         </div>
 
-        <Pagination :currPage="currPage" :numPages="numPages" />
+        <PaginationControls
+            :curr-page="currPage"
+            :num-pages="numPages"
+        />
     </div>
 </template>
 
 <script>
 import format from '../js/format';
-import Pagination from '@/components/Pagination';
+import PaginationControls from '@/components/PaginationControls';
 
 export default {
-    name: 'Databases',
+    name: 'DatabaseTable',
     components: {
-        Pagination
+        PaginationControls
     },
-    props: ['curr', 'conns'],
+    props: {
+        curr: {
+            type: Number,
+            required: true
+        },
+
+        conns: {
+            type: Array,
+            required: true
+        }
+    },
     data () {
         return {
             filter: '',
@@ -93,9 +112,21 @@ export default {
         curr: function () {
             this.load();
         },
+
         conns: function () {
             this.load();
         }
+    },
+    mounted () {
+        this.load();
+
+        this.$events.$on('refresh', (e) => {
+            this.load();
+        });
+
+        this.$events.$on('set-curr-page', (currPage) => {
+            this.currPage = currPage;
+        });
     },
     methods: {
         updateNumPages (items = [], count = 0) {
@@ -109,9 +140,11 @@ export default {
                 this.currPage = 1;
             }
         },
+
         open (db) {
             this.$router.push(`/dbs/${db.name}`);
         },
+
         remove (row) {
             let currConn = this.conns[this.curr];
             this.$events.$emit('confirm', {
@@ -139,6 +172,7 @@ export default {
                 }
             });
         },
+
         load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
@@ -182,17 +216,6 @@ export default {
                 });
             }
         }
-    },
-    mounted () {
-        this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
-
-        this.$events.$on('set-curr-page', (currPage) => {
-            this.currPage = currPage;
-        });
     }
 };
 </script>

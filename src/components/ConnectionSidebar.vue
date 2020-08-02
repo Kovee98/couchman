@@ -1,12 +1,10 @@
 <template>
     <div>
-        <Connection />
+        <ConnectionModal/>
 
         <div>
-            <b-nav-item v-b-toggle.conns>Connections</b-nav-item>
-
             <b-sidebar
-                id="conns"
+                id="conns-sidebar"
                 title="Connections"
                 width="400px"
                 backdrop
@@ -22,20 +20,31 @@
                             @click="activate(i)"
                         >
                             <div class="row">
-                                <span class="text-truncate col-4">{{conn.name}}</span>
-                                <span class="text-muted text-truncate col-5 px-0">{{conn.baseUrl}}</span>
+                                <span class="text-truncate col-4">
+                                    {{conn.name}}
+                                </span>
+                                <span class="text-muted text-truncate col-5 px-0">
+                                    {{conn.baseUrl}}
+                                </span>
                                 <span class="col-2 px-0 ml-3">
-                                    <div @click.stop="update(i, conn)" class="update pl-2">
-                                        <b-icon-pencil font-scale="1.125" />
+                                    <div
+                                        @click.stop="update(i, conn)"
+                                        class="update pl-2"
+                                    >
+                                        <b-icon-pencil font-scale="1.125"/>
                                     </div>
-                                    <div @click.stop="remove(i, conn)" class="remove pl-2">
-                                        <b-icon-trash font-scale="1.125" />
+                                    <div
+                                        @click.stop="remove(i, conn)"
+                                        class="remove pl-2"
+                                    >
+                                        <b-icon-trash font-scale="1.125"/>
                                     </div>
                                 </span>
                             </div>
                         </b-list-group-item>
                     </b-list-group>
                 </div>
+
                 <template v-slot:footer>
                     <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
                         <b-button
@@ -44,7 +53,7 @@
                             @click.prevent="add"
                             class="float-left"
                         >
-                            <b-icon-plus />
+                            <b-icon-plus/>
                             Add Connection
                         </b-button>
                     </div>
@@ -56,25 +65,38 @@
 
 <script>
 // @ is an alias to /src
-import Connection from '@/components/Connection.vue';
+import ConnectionModal from '@/components/ConnectionModal.vue';
 
 export default {
-    name: 'Connections',
-    props: ['curr', 'conns'],
+    name: 'ConnectionSidebar',
     components: {
-        Connection
+        ConnectionModal
+    },
+    props: {
+        curr: {
+            type: Number,
+            required: true
+        },
+
+        conns: {
+            type: Array,
+            required: true
+        }
     },
     methods: {
         add () {
             this.$events.$emit('connection-add');
         },
+
         activate (i) {
             this.$store.dispatch('connections/activate', i);
             this.$events.$emit('refresh');
         },
+
         update (i, conn) {
             this.$events.$emit('connection-update', i, conn);
         },
+
         remove (i, conn) {
             this.$events.$emit('confirm', {
                 title: 'Delete Connection?',

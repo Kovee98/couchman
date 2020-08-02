@@ -1,7 +1,9 @@
 <template>
     <div>
         <b-breadcrumb class="px-0 my-4 h5">
-            <b-breadcrumb-item href="/#/dbs">Databases</b-breadcrumb-item>
+            <b-breadcrumb-item href="/#/dbs">
+                Databases
+            </b-breadcrumb-item>
             <b-breadcrumb-item
                 v-if="$route.params.db"
                 :href="`/#/dbs/${$route.params.db}`"
@@ -22,6 +24,6 @@
 
 <script>
 export default {
-
+    name: 'BreadcrumbNavigation'
 };
 </script>

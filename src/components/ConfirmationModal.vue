@@ -16,7 +16,7 @@
 
 <script>
 export default {
-    name: 'Confirmation',
+    name: 'ConfirmationModal',
     data () {
         return {
             show: false,

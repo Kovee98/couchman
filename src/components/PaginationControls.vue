@@ -8,7 +8,10 @@
             @click="prevPage"
             class="text-primary"
         >
-            <b-icon-chevron-left font-scale="0.95" class="mr-1" />
+            <b-icon-chevron-left
+                font-scale="0.95"
+                class="mr-1"
+            />
             Prev
         </b-button>
 
@@ -67,30 +70,39 @@
             class="text-primary"
         >
             Next
-            <b-icon-chevron-right font-scale="0.95" class="ml-1" />
+            <b-icon-chevron-right
+                font-scale="0.95"
+                class="ml-1"
+            />
         </b-button>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'Pagination',
-    props: ['currPage', 'numPages'],
-    data () {
-        return {
-            // how many page numbers to display on each side of currPage
-            numCount: 2
-        };
+    name: 'PaginationControls',
+    props: {
+        currPage: {
+            type: Number,
+            required: true
+        },
+
+        numPages: {
+            type: Number,
+            required: true
+        }
     },
     methods: {
         choosePage (i) {
             this.$events.$emit('set-curr-page', i);
         },
+
         nextPage () {
             if (this.currPage < this.numPages) {
                 this.$events.$emit('set-curr-page', this.currPage + 1);
             }
         },
+
         prevPage () {
             if (this.currPage > 1) {
                 this.$events.$emit('set-curr-page', this.currPage - 1);
@@ -100,7 +112,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .pagination {
         // position: fixed;
         // bottom: 0;

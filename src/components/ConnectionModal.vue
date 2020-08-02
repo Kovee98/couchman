@@ -1,8 +1,13 @@
 <template>
     <div>
         <b-modal id="connection">
-            <template v-slot:modal-title class="capitalize">
-                <span class="capitalize">{{action}} Connection</span>
+            <template
+                v-slot:modal-title
+                class="capitalize"
+            >
+                <span class="capitalize">
+                    {{action}} Connection
+                </span>
             </template>
             <div class="d-block">
                 <b-form>
@@ -66,7 +71,10 @@
 
             <template v-slot:modal-footer>
                 <div>
-                    <b-overlay :show="isTesting" rounded="sm">
+                    <b-overlay
+                        :show="isTesting"
+                        rounded="sm"
+                    >
                         <b-button
                             :variant="testResult"
                             @click="test"
@@ -74,11 +82,17 @@
                         >
                             Test
                             <span v-if="isValid !== null">
-                                <span v-if="isValid" class="text-success">
-                                    <b-icon-check />
+                                <span
+                                    v-if="isValid"
+                                    class="text-success"
+                                >
+                                    <b-icon-check/>
                                 </span>
-                                <span v-if="!isValid" class="text-danger">
-                                    <b-icon-exclamation />
+                                <span
+                                    v-if="!isValid"
+                                    class="text-danger"
+                                >
+                                    <b-icon-exclamation/>
                                 </span>
                             </span>
                         </b-button>
@@ -100,7 +114,7 @@
 
 <script>
 export default {
-    name: 'Connection',
+    name: 'ConnectionModal',
     data () {
         return {
             action: '',
@@ -125,71 +139,6 @@ export default {
             } else {
                 return 'outline-danger';
             }
-        }
-    },
-    methods: {
-        submit () {
-            let conn = this.getConn();
-
-            let invalid = this.validate(conn);
-
-            if (invalid.length > 0) {
-                let fields = invalid.join(', ');
-                this.$events.$emit('alert-open', {
-                    variant: 'danger',
-                    msg: `Missing required field(s): ${fields}`
-                });
-                return;
-            }
-
-            this.$events.$emit('alert-close');
-
-            let action = `connections/${this.action}`;
-            this.$store.dispatch(action, {
-                i: this.index,
-                conn: conn
-            });
-
-            this.$bvModal.hide('connection');
-        },
-        validate (conn) {
-            let invalid = [];
-
-            if (!conn.name) invalid.push('name');
-            if (!conn.url) invalid.push('url');
-            if (conn.user && !conn.pass) invalid.push('password');
-            if (!conn.user && conn.pass) invalid.push('user');
-
-            return invalid;
-        },
-        getConn () {
-            let baseUrl = this.form.url;
-            let url = baseUrl;
-            if (baseUrl && this.form.user && this.form.pass) {
-                url = baseUrl.split('//');
-                url = `${url[0]}//${this.form.user}:${this.form.pass}@${url[1]}`;
-            }
-
-            return Object.assign(this.conn || {}, {
-                name: this.form.name,
-                baseUrl: baseUrl,
-                url: url,
-                user: this.form.user,
-                pass: this.form.pass
-            });
-        },
-        test () {
-            let conn = this.getConn();
-            this.isValid = null;
-            this.isTesting = true;
-
-            this.$http.get(conn.baseUrl, conn.user, conn.pass).then(() => {
-                this.isValid = true;
-            }).catch(() => {
-                this.isValid = false;
-            }).finally(() => {
-                this.isTesting = false;
-            });
         }
     },
     created () {
@@ -220,6 +169,74 @@ export default {
 
             this.$bvModal.show('connection');
         });
+    },
+    methods: {
+        submit () {
+            let conn = this.getConn();
+
+            let invalid = this.validate(conn);
+
+            if (invalid.length > 0) {
+                let fields = invalid.join(', ');
+                this.$events.$emit('alert-open', {
+                    variant: 'danger',
+                    msg: `Missing required field(s): ${fields}`
+                });
+                return;
+            }
+
+            this.$events.$emit('alert-close');
+
+            let action = `connections/${this.action}`;
+            this.$store.dispatch(action, {
+                i: this.index,
+                conn: conn
+            });
+
+            this.$bvModal.hide('connection');
+        },
+
+        validate (conn) {
+            let invalid = [];
+
+            if (!conn.name) invalid.push('name');
+            if (!conn.url) invalid.push('url');
+            if (conn.user && !conn.pass) invalid.push('password');
+            if (!conn.user && conn.pass) invalid.push('user');
+
+            return invalid;
+        },
+
+        getConn () {
+            let baseUrl = this.form.url;
+            let url = baseUrl;
+            if (baseUrl && this.form.user && this.form.pass) {
+                url = baseUrl.split('//');
+                url = `${url[0]}//${this.form.user}:${this.form.pass}@${url[1]}`;
+            }
+
+            return Object.assign(this.conn || {}, {
+                name: this.form.name,
+                baseUrl: baseUrl,
+                url: url,
+                user: this.form.user,
+                pass: this.form.pass
+            });
+        },
+
+        test () {
+            let conn = this.getConn();
+            this.isValid = null;
+            this.isTesting = true;
+
+            this.$http.get(conn.baseUrl, conn.user, conn.pass).then(() => {
+                this.isValid = true;
+            }).catch(() => {
+                this.isValid = false;
+            }).finally(() => {
+                this.isTesting = false;
+            });
+        }
     }
 };
 </script>

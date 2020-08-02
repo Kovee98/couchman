@@ -1,6 +1,9 @@
 <template>
     <div class="mt-4">
-        <b-overlay :show="loading" rounded="sm">
+        <b-overlay
+            :show="loading"
+            rounded="sm"
+        >
             <codemirror
                 v-model="doc"
                 :options="opts"
@@ -9,7 +12,12 @@
         </b-overlay>
 
         <span class="float-right">
-            <b-button variant="outline-secondary" @click="cancel">Cancel</b-button>
+            <b-button
+                variant="outline-secondary"
+                @click="cancel"
+            >
+                Cancel
+            </b-button>
             <b-button
                 variant="primary"
                 @click="save"
@@ -25,11 +33,21 @@
 import { codemirror } from 'vue-codemirror';
 
 export default {
-    name: 'Document',
+    name: 'DocumentEditor',
     components: {
         codemirror
     },
-    props: ['curr', 'conns'],
+    props: {
+        curr: {
+            type: Number,
+            required: true
+        },
+
+        conns: {
+            type: Array,
+            required: true
+        }
+    },
     data () {
         return {
             show: false,
@@ -59,11 +77,23 @@ export default {
         curr () {
             this.load();
         },
+
         conns () {
             this.load();
         }
     },
+    mounted () {
+        this.load();
+
+        this.$events.$on('refresh', (e) => {
+            this.load();
+        });
+    },
     methods: {
+        cancel () {
+            this.$router.go(-1);
+        },
+
         save (e) {
             let doc = this.codemirror.getValue();
             doc = JSON.parse(doc);
@@ -89,9 +119,7 @@ export default {
                 });
             }
         },
-        cancel () {
-            this.$router.go(-1);
-        },
+
         load () {
             this.loading = true;
             this.doc = '';
@@ -115,13 +143,6 @@ export default {
                 });
             }
         }
-    },
-    mounted () {
-        this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
     }
 };
 </script>

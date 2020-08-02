@@ -13,7 +13,7 @@
 
 <script>
 export default {
-    name: 'Alert',
+    name: 'AlertMessage',
     data () {
         return {
             show: false,
@@ -22,11 +22,6 @@ export default {
             variant: 'default',
             msg: 'This is an alert'
         };
-    },
-    methods: {
-        countdownChanged (countdown) {
-            this.countdown = countdown;
-        }
     },
     created () {
         this.$events.$on('alert-open', (data) => {
@@ -38,11 +33,16 @@ export default {
         this.$events.$on('alert-close', (data) => {
             this.show = false;
         });
+    },
+    methods: {
+        countdownChanged (countdown) {
+            this.countdown = countdown;
+        }
     }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     #app .alert {
         position: fixed;
         bottom: 16px;

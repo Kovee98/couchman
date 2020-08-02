@@ -1,33 +1,46 @@
 <template>
     <div id="app">
-        <Alert />
+        <TitleBar
+            :curr="curr"
+            :conns="conns"
+        />
 
-        <Confirmation />
+        <AlertMessage/>
 
-        <Navbar :curr="curr" :conns="conns" />
+        <ConfirmationModal/>
+
+        <ConnectionSidebar
+            :curr="curr"
+            :conns="conns"
+        />
 
         <b-container>
-            <Breadcrumb />
+            <BreadcrumbNavigation/>
 
-            <router-view :curr="curr" :conns="conns" />
+            <router-view
+                :curr="curr"
+                :conns="conns"
+            />
         </b-container>
     </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Navbar from '@/components/Navbar.vue';
-import Confirmation from '@/components/Confirmation.vue';
-import Alert from '@/components/Alert.vue';
-import Breadcrumb from '@/components/Breadcrumb.vue';
+import TitleBar from '@/components/TitleBar.vue';
+import ConfirmationModal from '@/components/ConfirmationModal.vue';
+import AlertMessage from '@/components/AlertMessage.vue';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue';
+import ConnectionSidebar from '@/components/ConnectionSidebar.vue';
 
 export default {
     name: 'App',
     components: {
-        Navbar,
-        Confirmation,
-        Alert,
-        Breadcrumb
+        TitleBar,
+        ConfirmationModal,
+        AlertMessage,
+        BreadcrumbNavigation,
+        ConnectionSidebar
     },
     computed: {
         curr () {

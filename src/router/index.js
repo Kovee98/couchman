@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Databases from '../views/Databases.vue';
-import Documents from '../views/Documents.vue';
-import Document from '../views/Document.vue';
+import DatabaseTable from '../views/DatabaseTable.vue';
+import DocumentTable from '../views/DocumentTable.vue';
+import DocumentEditor from '../views/DocumentEditor.vue';
 
 Vue.use(VueRouter);
 
@@ -13,18 +13,18 @@ const routes = [
     },
     {
         path: '/dbs',
-        name: 'Databases',
-        component: Databases
+        name: 'DatabaseTable',
+        component: DatabaseTable
     },
     {
         path: '/dbs/:db',
-        name: 'Documents',
-        component: Documents
+        name: 'DocumentTable',
+        component: DocumentTable
     },
     {
         path: '/dbs/:db/:doc',
-        name: 'Document',
-        component: Document
+        name: 'DocumentEditor',
+        component: DocumentEditor
     }
 ];
 

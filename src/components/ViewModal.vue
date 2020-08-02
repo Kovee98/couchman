@@ -7,8 +7,13 @@
             @show="reset"
             @ok="save"
         >
-            <template v-slot:modal-title class="capitalize">
-                <span class="capitalize">Create View</span>
+            <template
+                v-slot:modal-title
+                class="capitalize"
+            >
+                <span class="capitalize">
+                    Create View
+                </span>
             </template>
 
             <b-form-group
@@ -68,7 +73,7 @@
 
 <script>
 export default {
-    name: 'Views',
+    name: 'ViewModal',
     data () {
         return {
             name: '',
@@ -85,13 +90,16 @@ export default {
                 }
             });
         },
+
         addCol () {
             this.cols.push(this.col);
             this.col = '';
         },
+
         removeCol (i) {
             this.cols.splice(i, 1);
         },
+
         reset () {
             this.name = '';
             this.col = '';
@@ -101,7 +109,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .clickable {
         :hover {
             color: red;

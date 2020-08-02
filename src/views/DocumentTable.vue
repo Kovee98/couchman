@@ -1,12 +1,21 @@
 <template>
     <div class="mt-4">
         <div class="pt-3">
-            <b-dropdown id="view-dropdown" variant="primary">
+            <b-dropdown
+                id="view-dropdown"
+                variant="primary"
+            >
                 <template v-slot:button-content>
-                    <b-icon-eye font-scale="0.99" class="mr-1" />
+                    <b-icon-eye
+                        font-scale="0.99"
+                        class="mr-1"
+                    />
                     {{viewName}}
                 </template>
-                <b-dropdown-item :active="currView === -1" @click="activate(-1)">
+                <b-dropdown-item
+                    :active="currView === -1"
+                    @click="activate(-1)"
+                >
                     None
                 </b-dropdown-item>
                 <b-dropdown-item
@@ -18,26 +27,39 @@
                 >
                     {{view.name}}
                     <span class="float-right">
-                        <div class="remove" @click.stop="removeView(i)">
-                            <b-icon-trash font-scale="0.99" />
+                        <div
+                            class="remove"
+                            @click.stop="removeView(i)"
+                        >
+                            <b-icon-trash font-scale="0.99"/>
                         </div>
                     </span>
                 </b-dropdown-item>
-                <b-dropdown-divider />
+
+                <b-dropdown-divider/>
+
                 <b-dropdown-item v-b-modal.views>
                     Create View
-                    <b-icon-plus-circle font-scale="0.95" class="ml-2" />
+                    <b-icon-plus-circle
+                        font-scale="0.95"
+                        class="ml-2"
+                    />
                 </b-dropdown-item>
             </b-dropdown>
+
             <b-button
                 variant="primary"
                 v-b-toggle.filter-collapse
                 class="ml-2"
             >
                 Filter
-                <b-icon-funnel font-scale="0.95" class="ml-1" />
+                <b-icon-funnel
+                    font-scale="0.95"
+                    class="ml-1"
+                />
             </b-button>
         </div>
+
         <b-collapse id="filter-collapse">
             <b-card>
                 <b-form-input
@@ -48,7 +70,10 @@
             </b-card>
         </b-collapse>
 
-        <div class="mb-3" style="height: 550px">
+        <div
+            class="mb-3"
+            style="height: 550px"
+        >
             <b-table
                 :items="docs"
                 :fields="filteredFields"
@@ -68,31 +93,47 @@
             >
                 <template v-slot:cell(actions)="row">
                     <span class="float-right">
-                        <div @click.stop="remove(row)" class="remove pl-2">
-                            <b-icon-trash font-scale="1.125" />
+                        <div
+                            @click.stop="remove(row)"
+                            class="remove pl-2"
+                        >
+                            <b-icon-trash font-scale="1.125"/>
                         </div>
                     </span>
                 </template>
             </b-table>
         </div>
 
-        <Pagination :currPage="currPage" :numPages="numPages" />
+        <PaginationControls
+            :curr-page="currPage"
+            :num-pages="numPages"
+        />
 
-        <Views />
+        <ViewModal/>
     </div>
 </template>
 
 <script>
-import Views from '@/components/Views';
-import Pagination from '@/components/Pagination';
+import ViewModal from '@/components/ViewModal';
+import PaginationControls from '@/components/PaginationControls';
 
 export default {
-    name: 'Databases',
+    name: 'DocumentTable',
     components: {
-        Views,
-        Pagination
+        ViewModal,
+        PaginationControls
     },
-    props: ['curr', 'conns'],
+    props: {
+        curr: {
+            type: Number,
+            required: true
+        },
+
+        conns: {
+            type: Array,
+            required: true
+        }
+    },
     data () {
         return {
             filter: '',
@@ -110,9 +151,11 @@ export default {
         views () {
             return this.$store.getters['views/views'];
         },
+
         currView () {
             return this.$store.getters['views/curr'];
         },
+
         viewName () {
             if (this.views && this.currView >= 0) {
                 let view = this.views[this.currView];
@@ -126,12 +169,25 @@ export default {
         curr: function () {
             this.load();
         },
+
         conns: function () {
             this.load();
         },
+
         currView: function () {
             this.filterFields();
         }
+    },
+    mounted () {
+        this.load();
+
+        this.$events.$on('refresh', (e) => {
+            this.load();
+        });
+
+        this.$events.$on('set-curr-page', (currPage) => {
+            this.currPage = currPage;
+        });
     },
     methods: {
         updateNumPages (items = [], count = 0) {
@@ -145,6 +201,7 @@ export default {
                 this.currPage = 1;
             }
         },
+
         filterFields () {
             if (this.currView >= 0 && this.views.length > 0) {
                 let cols = this.views[this.currView].cols;
@@ -163,12 +220,19 @@ export default {
 
             this.filteredFields = filteredFields;
         },
+
+        removeView (i) {
+            this.$store.dispatch('views/remove', i);
+        },
+
         activate (i, view) {
             this.$store.dispatch('views/activate', i);
         },
+
         edit (doc) {
             this.$router.push(`${this.$route.fullPath}/${doc._id}`);
         },
+
         remove (row) {
             let currConn = this.conns[this.curr];
             if (currConn && currConn.url) {
@@ -198,9 +262,7 @@ export default {
                 });
             }
         },
-        removeView (i) {
-            this.$store.dispatch('views/remove', i);
-        },
+
         load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
@@ -239,17 +301,6 @@ export default {
                 });
             }
         }
-    },
-    mounted () {
-        this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
-
-        this.$events.$on('set-curr-page', (currPage) => {
-            this.currPage = currPage;
-        });
     }
 };
 </script>
