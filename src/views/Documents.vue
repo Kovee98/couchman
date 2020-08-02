@@ -48,31 +48,33 @@
             </b-card>
         </b-collapse>
 
-        <b-table
-            :items="docs"
-            :fields="filteredFields"
-            :filter="filter"
-            :per-page="perPage"
-            :current-page="currPage"
-            tbody-tr-class="tr"
-            head-variant="dark"
-            table-variant="light"
-            :busy="loading"
-            @row-clicked="edit"
-            @filtered="updateNumPages"
-            class="mt-3"
-            outlined
-            striped
-            fixed
-        >
-            <template v-slot:cell(actions)="row">
-                <span class="float-right">
-                    <div @click.stop="remove(row)" class="remove pl-2">
-                        <b-icon-trash font-scale="1.125" />
-                    </div>
-                </span>
-            </template>
-        </b-table>
+        <div class="mb-3" style="height: 550px">
+            <b-table
+                :items="docs"
+                :fields="filteredFields"
+                :filter="filter"
+                :per-page="perPage"
+                :current-page="currPage"
+                tbody-tr-class="tr"
+                head-variant="dark"
+                table-variant="light"
+                :busy="loading"
+                @row-clicked="edit"
+                @filtered="updateNumPages"
+                class="mt-3"
+                outlined
+                striped
+                fixed
+            >
+                <template v-slot:cell(actions)="row">
+                    <span class="float-right">
+                        <div @click.stop="remove(row)" class="remove pl-2">
+                            <b-icon-trash font-scale="1.125" />
+                        </div>
+                    </span>
+                </template>
+            </b-table>
+        </div>
 
         <Pagination :currPage="currPage" :numPages="numPages" />
 
@@ -94,7 +96,7 @@ export default {
     data () {
         return {
             filter: '',
-            perPage: 5,
+            perPage: 10,
             currPage: 1,
             numPages: 0,
             docs: [],
