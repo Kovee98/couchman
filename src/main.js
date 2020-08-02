@@ -6,8 +6,6 @@ import events from './js/events';
 
 // bootstrap dependencies
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
@@ -19,6 +17,9 @@ import 'codemirror/addon/edit/matchbrackets.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/selection/active-line.js';
 Vue.use(VueCodemirror);
+
+// import styles
+import '../dist/css/app.min.css';
 
 // globals
 import http from './js/http.js';
