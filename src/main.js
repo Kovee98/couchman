@@ -19,7 +19,7 @@ import 'codemirror/addon/selection/active-line.js';
 Vue.use(VueCodemirror);
 
 // import styles
-import '../dist/css/app.min.css';
+import './css/app.min.css';
 
 // globals
 import http from './js/http.js';
