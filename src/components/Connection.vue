@@ -15,10 +15,10 @@
                         <b-form-input
                             id="conn-name"
                             v-model="form.name"
-                            required
                             placeholder="Connection 1"
+                            required
                             trim
-                        ></b-form-input>
+                        />
                     </b-form-group>
 
                     <b-form-group
@@ -31,10 +31,10 @@
                             id="conn-url"
                             v-model="form.url"
                             type="url"
-                            required
                             placeholder="http://localhost:5984"
+                            required
                             trim
-                        ></b-form-input>
+                        />
                     </b-form-group>
 
                     <b-form-group
@@ -46,7 +46,7 @@
                             id="conn-user"
                             v-model="form.user"
                             trim
-                        ></b-form-input>
+                        />
                     </b-form-group>
 
                     <b-form-group
@@ -59,7 +59,7 @@
                             v-model="form.pass"
                             type="password"
                             trim
-                        ></b-form-input>
+                        />
                     </b-form-group>
                 </b-form>
             </div>
@@ -67,17 +67,29 @@
             <template v-slot:modal-footer>
                 <div>
                     <b-overlay :show="isTesting" rounded="sm">
-                        <b-button class="capitalize" :variant="testResult" @click="test">
+                        <b-button
+                            :variant="testResult"
+                            @click="test"
+                            class="capitalize"
+                        >
                             Test
                             <span v-if="isValid !== null">
-                                <span v-if="isValid" class="text-success"><b-icon-check/></span>
-                                <span v-if="!isValid" class="text-danger"><b-icon-exclamation/></span>
+                                <span v-if="isValid" class="text-success">
+                                    <b-icon-check />
+                                </span>
+                                <span v-if="!isValid" class="text-danger">
+                                    <b-icon-exclamation />
+                                </span>
                             </span>
                         </b-button>
                     </b-overlay>
                 </div>
                 <div>
-                    <b-button class="capitalize" variant="success" @click="submit">
+                    <b-button
+                        variant="success"
+                        @click="submit"
+                        class="capitalize"
+                    >
                         {{action}}
                     </b-button>
                 </div>
@@ -88,7 +100,8 @@
 
 <script>
 export default {
-    data: function () {
+    name: 'Connection',
+    data () {
         return {
             action: '',
             conn: {},
@@ -115,7 +128,7 @@ export default {
         }
     },
     methods: {
-        submit: function () {
+        submit () {
             let conn = this.getConn();
 
             let invalid = this.validate(conn);

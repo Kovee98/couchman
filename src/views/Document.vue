@@ -10,7 +10,13 @@
 
         <span class="float-right">
             <b-button variant="outline-secondary" @click="cancel">Cancel</b-button>
-            <b-button variant="primary" @click="save" class="ml-2">Save</b-button>
+            <b-button
+                variant="primary"
+                @click="save"
+                class="ml-2"
+            >
+                Save
+            </b-button>
         </span>
     </div>
 </template>
@@ -19,10 +25,11 @@
 import { codemirror } from 'vue-codemirror';
 
 export default {
-    props: ['curr', 'conns'],
+    name: 'Document',
     components: {
         codemirror
     },
+    props: ['curr', 'conns'],
     data () {
         return {
             show: false,
@@ -43,15 +50,29 @@ export default {
             loading: false
         };
     },
+    computed: {
+        codemirror () {
+            return this.$refs.editor.codemirror;
+        }
+    },
+    watch: {
+        curr () {
+            this.load();
+        },
+        conns () {
+            this.load();
+        }
+    },
     methods: {
         save (e) {
             let doc = this.codemirror.getValue();
             doc = JSON.parse(doc);
-
             this.loading = true;
             let currConn = this.conns[this.curr];
+
             if (currConn && currConn.url && this.$route.params.doc) {
                 let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+
                 this.$http.put(url, currConn.user, currConn.pass, {
                     body: JSON.stringify(doc)
                 }).then((res) => {
@@ -61,6 +82,7 @@ export default {
                         variant: 'danger',
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
+
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -74,8 +96,10 @@ export default {
             this.loading = true;
             this.doc = '';
             let currConn = this.conns[this.curr];
+
             if (currConn && currConn.url && this.$route.params.doc) {
                 let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+
                 this.$http.get(url, currConn.user, currConn.pass).then((data) => {
                     this.doc = JSON.stringify(data, null, 4);
                     this.show = true;
@@ -84,6 +108,7 @@ export default {
                         variant: 'danger',
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
+
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -91,21 +116,9 @@ export default {
             }
         }
     },
-    watch: {
-        curr () {
-            this.load();
-        },
-        conns () {
-            this.load();
-        }
-    },
-    computed: {
-        codemirror () {
-            return this.$refs.editor.codemirror;
-        }
-    },
     mounted () {
         this.load();
+
         this.$events.$on('refresh', (e) => {
             this.load();
         });

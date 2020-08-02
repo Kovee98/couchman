@@ -1,11 +1,11 @@
 <template>
     <b-alert
         :show="countdown"
-        @dismiss-count-down="countdownChanged"
         :variant="variant"
+        @dismiss-count-down="countdownChanged"
+        class="alert"
         dismissible
         fade
-        class="alert"
     >
         {{msg}}
     </b-alert>
@@ -13,6 +13,7 @@
 
 <script>
 export default {
+    name: 'Alert',
     data () {
         return {
             show: false,

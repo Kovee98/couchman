@@ -1,22 +1,29 @@
 <template>
     <div>
-        <b-form-input v-model="filter" type="search" placeholder="Filter dbs..." class="my-3"></b-form-input>
+        <b-form-input
+            v-model="filter"
+            type="search"
+            placeholder="Filter dbs..."
+            class="my-3"
+        />
         <b-table
             :items="dbs"
             :fields="fields"
             :filter="filter"
-            outlined
-            striped
-            fixed
             tbody-tr-class="tr"
             head-variant="dark"
             table-variant="light"
             :busy="loading"
             @row-clicked="open"
+            outlined
+            striped
+            fixed
         >
             <template v-slot:cell(actions)="row">
                 <span class="float-right">
-                    <div class="remove pl-2" @click.stop="remove(row)"><b-icon-trash font-scale="1.125"/></div>
+                    <div class="remove pl-2" @click.stop="remove(row)">
+                        <b-icon-trash font-scale="1.125" />
+                    </div>
                 </span>
             </template>
         </b-table>
@@ -27,9 +34,9 @@
 import format from '../js/format';
 
 export default {
-    props: ['curr', 'conns'],
     name: 'Databases',
-    data: function () {
+    props: ['curr', 'conns'],
+    data () {
         return {
             filter: '',
             dbs: [],
@@ -132,6 +139,7 @@ export default {
                         variant: 'danger',
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
+
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -141,6 +149,7 @@ export default {
     },
     mounted () {
         this.load();
+
         this.$events.$on('refresh', (e) => {
             this.load();
         });

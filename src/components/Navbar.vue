@@ -13,8 +13,8 @@
 import Connections from '@/components/Connections.vue';
 
 export default {
-    props: ['curr', 'conns'],
     name: 'Navbar',
+    props: ['curr', 'conns'],
     components: {
         Connections
     }

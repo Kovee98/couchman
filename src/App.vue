@@ -1,8 +1,11 @@
 <template>
     <div id="app">
-        <Alert/>
-        <Confirmation/>
+        <Alert />
+
+        <Confirmation />
+
         <Navbar :curr="curr" :conns="conns" />
+
         <b-container>
             <Breadcrumb />
 

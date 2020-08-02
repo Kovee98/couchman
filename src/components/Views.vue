@@ -3,9 +3,9 @@
         <b-modal
             id="views"
             ok-title="Save"
+            cancel-variant="outline-secondary"
             @show="reset"
             @ok="save"
-            cancel-variant="outline-secondary"
         >
             <template v-slot:modal-title class="capitalize">
                 <span class="capitalize">Create View</span>
@@ -21,10 +21,10 @@
                     id="view-name"
                     v-model="name"
                     type="search"
-                    required
                     placeholder="View 1"
+                    required
                     trim
-                ></b-form-input>
+                />
             </b-form-group>
 
             <b-form @submit.prevent="addCol">
@@ -38,17 +38,25 @@
                         id="view-cols"
                         v-model="col"
                         type="search"
-                        required
                         placeholder="_id"
+                        required
                         trim
-                    ></b-form-input>
+                    />
                 </b-form-group>
                 <div>
                     <h4>
-                        <b-badge v-for="(col, i) in cols" :key="col.id" class="mr-2">
+                        <b-badge
+                            v-for="(col, i) in cols"
+                            :key="col.id"
+                            class="mr-2"
+                        >
                             {{col}}
                             <span class="clickable">
-                                <b-icon-trash font-scale="0.8" class="ml-2" @click="removeCol(i)" />
+                                <b-icon-trash
+                                    font-scale="0.8"
+                                    @click="removeCol(i)"
+                                    class="ml-2"
+                                />
                             </span>
                         </b-badge>
                     </h4>

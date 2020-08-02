@@ -1,46 +1,50 @@
 <template>
     <div class="mt-4">
-        <b-button-group class="my-3">
-            <b-dropdown
-                id="view-dropdown"
-                variant="primary"
-            >
+        <div class="pt-3">
+            <b-dropdown id="view-dropdown" variant="primary">
                 <template v-slot:button-content>
-                    <b-icon-eye />
+                    <b-icon-eye font-scale="0.99" class="mr-1" />
                     {{viewName}}
                 </template>
-                <b-dropdown-item
-                    @click="activate(-1)"
-                    :active="currView === -1"
-                >
+                <b-dropdown-item :active="currView === -1" @click="activate(-1)">
                     None
                 </b-dropdown-item>
                 <b-dropdown-item
                     v-for="(view, i) in views"
                     :key="view.id"
                     :value="view"
-                    @click="activate(i)"
                     :active="currView === i"
+                    @click="activate(i)"
                 >
                     {{view.name}}
                     <span class="float-right">
-                        <div class="remove" @click.stop="removeView(i)"><b-icon-trash font-scale="0.99"/></div>
+                        <div class="remove" @click.stop="removeView(i)">
+                            <b-icon-trash font-scale="0.99" />
+                        </div>
                     </span>
                 </b-dropdown-item>
-                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-divider />
                 <b-dropdown-item v-b-modal.views>
                     Create View
-                    <b-icon-plus-circle class="ml-2" font-scale="0.99"/>
+                    <b-icon-plus-circle font-scale="0.95" class="ml-2" />
                 </b-dropdown-item>
             </b-dropdown>
-            <b-button v-b-toggle.filter-collapse variant="primary">
-                <b-icon-funnel />
+            <b-button
+                variant="primary"
+                v-b-toggle.filter-collapse
+                class="ml-2"
+            >
                 Filter
+                <b-icon-funnel font-scale="0.95" class="ml-1" />
             </b-button>
-        </b-button-group>
-        <b-collapse id="filter-collapse" class="mb-3">
+        </div>
+        <b-collapse id="filter-collapse">
             <b-card>
-                <b-form-input v-model="filter" type="search" placeholder="Filter docs..."></b-form-input>
+                <b-form-input
+                    v-model="filter"
+                    type="search"
+                    placeholder="Filter docs..."
+                />
             </b-card>
         </b-collapse>
 
@@ -56,14 +60,23 @@
             :busy="loading"
             @row-clicked="edit"
             @filtered="updateNumPages"
+            class="mt-3"
+            outlined
+            striped
+            fixed
         >
             <template v-slot:cell(actions)="row">
                 <span class="float-right">
-                    <div class="remove pl-2" @click.stop="remove(row)"><b-icon-trash font-scale="1.125"/></div>
+                    <div @click.stop="remove(row)" class="remove pl-2">
+                        <b-icon-trash font-scale="1.125" />
+                    </div>
                 </span>
             </template>
         </b-table>
+
         <Pagination :currPage="currPage" :numPages="numPages" />
+
+        <Views />
     </div>
 </template>
 
@@ -72,13 +85,13 @@ import Views from '@/components/Views';
 import Pagination from '@/components/Pagination';
 
 export default {
-    props: ['curr', 'conns'],
     name: 'Databases',
     components: {
         Views,
         Pagination
     },
-    data: function () {
+    props: ['curr', 'conns'],
+    data () {
         return {
             filter: '',
             perPage: 5,
@@ -90,17 +103,6 @@ export default {
             cols: [],
             loading: false
         };
-    },
-    watch: {
-        curr: function () {
-            this.load();
-        },
-        conns: function () {
-            this.load();
-        },
-        currView: function () {
-            this.filterFields();
-        }
     },
     computed: {
         views () {
@@ -114,7 +116,19 @@ export default {
                 let view = this.views[this.currView];
                 return view ? view.name : 'None';
             }
+
             return 'None';
+        }
+    },
+    watch: {
+        curr: function () {
+            this.load();
+        },
+        conns: function () {
+            this.load();
+        },
+        currView: function () {
+            this.filterFields();
         }
     },
     methods: {
@@ -188,8 +202,10 @@ export default {
         load () {
             this.loading = true;
             let currConn = this.conns[this.curr];
+
             if (currConn && currConn.url && this.$route.params.db) {
                 let url = `${currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
+
                 this.$http.get(url, currConn.user, currConn.pass).then((data) => {
                     this.docs = data.rows.map(row => row.doc);
 
@@ -212,6 +228,7 @@ export default {
                         variant: 'danger',
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
+
                     console.log(err);
                 }).finally(() => {
                     this.loading = false;
@@ -221,6 +238,7 @@ export default {
     },
     mounted () {
         this.load();
+
         this.$events.$on('refresh', (e) => {
             this.load();
         });
