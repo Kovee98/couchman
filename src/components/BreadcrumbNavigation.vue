@@ -27,3 +27,9 @@ export default {
     name: 'BreadcrumbNavigation'
 };
 </script>
+
+<style lang="scss" scoped>
+    .breadcrumb {
+        background: transparent !important;
+    }
+</style>
