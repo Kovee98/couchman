@@ -140,7 +140,7 @@ export default {
             this.numPages = rem > 0 ? numPages + 1 : numPages;
 
             if (this.currPage > this.numPages) {
-                this.currPage = this.numPages;
+                this.currPage = this.numPages || 1;
             } else if (this.currPage === 0) {
                 this.currPage = 1;
             }
@@ -208,23 +208,25 @@ export default {
             if (currConn && currConn.url && this.$route.params.db) {
                 let url = `${currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
 
-                this.$http.get(url, currConn.user, currConn.pass).then((data) => {
-                    this.docs = data.rows.map(row => row.doc);
+                this.$http.get(url, currConn.user, currConn.pass).then(({ rows = [] }) => {
+                    this.docs = rows.map(row => row.doc) || [];
 
                     // update pagination
                     this.updateNumPages(null, this.docs.length);
 
-                    let fields = Object.keys(this.docs[0]);
-                    fields = fields.map((field) => {
-                        return {
-                            key: field,
-                            sortable: true,
-                            class: 'truncate td'
-                        };
-                    });
+                    if (this.docs.length > 0) {
+                        let fields = Object.keys(this.docs[0]);
+                        fields = fields.map((field) => {
+                            return {
+                                key: field,
+                                sortable: true,
+                                class: 'truncate td'
+                            };
+                        });
 
-                    this.fields = fields;
-                    this.filterFields();
+                        this.fields = fields;
+                        this.filterFields();
+                    }
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {
                         variant: 'danger',
