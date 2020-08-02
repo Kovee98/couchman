@@ -4,23 +4,8 @@
         <Confirmation/>
         <Navbar :curr="curr" :conns="conns" />
         <b-container>
-            <b-breadcrumb class="px-0 my-4 h5">
-                <b-breadcrumb-item href="/#/dbs">Databases</b-breadcrumb-item>
-                <b-breadcrumb-item
-                    v-if="$route.params.db"
-                    :href="`/#/dbs/${$route.params.db}`"
-                    :active="!!$route.params.db && !$route.params.doc"
-                >
-                    {{$route.params.db}}
-                </b-breadcrumb-item>
-                <b-breadcrumb-item
-                    v-if="$route.params.doc"
-                    :href="`/#/dbs/${$route.params.db}/${$route.params.doc}`"
-                    :active="!!$route.params.doc"
-                >
-                    {{$route.params.doc}}
-                </b-breadcrumb-item>
-            </b-breadcrumb>
+            <Breadcrumb />
+
             <router-view :curr="curr" :conns="conns" />
         </b-container>
     </div>
@@ -31,13 +16,15 @@
 import Navbar from '@/components/Navbar.vue';
 import Confirmation from '@/components/Confirmation.vue';
 import Alert from '@/components/Alert.vue';
+import Breadcrumb from '@/components/Breadcrumb.vue';
 
 export default {
     name: 'App',
     components: {
         Navbar,
         Confirmation,
-        Alert
+        Alert,
+        Breadcrumb
     },
     computed: {
         curr () {
