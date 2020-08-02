@@ -20,7 +20,7 @@ import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/selection/active-line.js';
 Vue.use(VueCodemirror);
 
-// general globals
+// globals
 import http from './js/http.js';
 Vue.use({
     install (Vue) {
