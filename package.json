@@ -6,7 +6,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "image:build": "docker build -t kovee98/couchman:test .",
+    "image:push": "docker push kovee98/couchman:test",
+    "image:run": "docker run -it -p 8080:8080 --rm --name couchman-test kovee98/couchman:test"
   },
   "dependencies": {
     "bootstrap": "^4.5.0",
