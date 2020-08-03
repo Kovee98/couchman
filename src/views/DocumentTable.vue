@@ -249,7 +249,7 @@ export default {
                                     variant: 'danger',
                                     msg: `${err.message} (${(err.response || {}).statusText || ''})`
                                 });
-                                console.log('err:', err);
+                                this.$log.error('err:', err);
                             }).finally(() => {
                                 this.load();
                             });
@@ -295,7 +295,7 @@ export default {
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
 
-                    console.log(err);
+                    this.$log.error(err);
                 }).finally(() => {
                     this.loading = false;
                 });

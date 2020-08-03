@@ -113,7 +113,7 @@ export default {
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
 
-                    console.log(err);
+                    this.$log.error(err);
                 }).finally(() => {
                     this.loading = false;
                 });
@@ -137,7 +137,7 @@ export default {
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
 
-                    console.log(err);
+                    this.$log.error(err);
                 }).finally(() => {
                     this.loading = false;
                 });

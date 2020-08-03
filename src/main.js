@@ -23,9 +23,12 @@ import './css/app.min.css';
 
 // globals
 import http from './js/http.js';
+import log from './js/log.js';
+
 Vue.use({
     install (Vue) {
         Vue.prototype.$http = http;
+        Vue.prototype.$log = log;
         Vue.prototype.$events = events;
     }
 });

@@ -160,7 +160,7 @@ export default {
                                 variant: 'danger',
                                 msg: `${err.message} (${(err.response || {}).statusText || ''})`
                             });
-                            console.log(err);
+                            this.$log.error(err);
                         }).finally(() => {
                             this.load();
                         });
@@ -202,7 +202,7 @@ export default {
                             msg: `${err.message} (${(err.response || {}).statusText || ''})`
                         });
 
-                        console.log(err);
+                        this.$log.error(err);
                     });
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {
@@ -210,7 +210,7 @@ export default {
                         msg: `${err.message} (${(err.response || {}).statusText || ''})`
                     });
 
-                    console.log(err);
+                    this.$log.error(err);
                 }).finally(() => {
                     this.loading = false;
                 });
