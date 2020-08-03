@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Document table with filtering and sorting
 - Database table with filtering and sorting
 - Simple view system
+- Basic Docker support
 
 ## [1.0.0] - 2020-08-03
 ### Added
