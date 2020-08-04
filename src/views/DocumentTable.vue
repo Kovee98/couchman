@@ -85,7 +85,6 @@
                 table-variant="light"
                 :busy="loading"
                 @row-clicked="edit"
-                @filtered="updateNumPages"
                 class="mt-3"
                 outlined
                 striped
@@ -104,9 +103,11 @@
             </b-table>
         </div>
 
-        <PaginationControls
-            :curr-page="currPage"
-            :num-pages="numPages"
+        <b-pagination
+            v-model="currPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
         />
 
         <ViewModal/>
@@ -115,13 +116,11 @@
 
 <script>
 import ViewModal from '@/components/ViewModal';
-import PaginationControls from '@/components/PaginationControls';
 
 export default {
     name: 'DocumentTable',
     components: {
-        ViewModal,
-        PaginationControls
+        ViewModal
     },
     props: {
         curr: {
@@ -139,7 +138,6 @@ export default {
             filter: '',
             perPage: 10,
             currPage: 1,
-            numPages: 0,
             docs: [],
             fields: [],
             filteredFields: [],
@@ -148,6 +146,10 @@ export default {
         };
     },
     computed: {
+        totalRows () {
+            return this.docs.length;
+        },
+
         views () {
             return this.$store.getters['views/views'];
         },
@@ -190,18 +192,6 @@ export default {
         });
     },
     methods: {
-        updateNumPages (items = [], count = 0) {
-            let rem = count % this.perPage;
-            let numPages = Math.floor(count / this.perPage);
-            this.numPages = rem > 0 ? numPages + 1 : numPages;
-
-            if (this.currPage > this.numPages) {
-                this.currPage = this.numPages || 1;
-            } else if (this.currPage === 0) {
-                this.currPage = 1;
-            }
-        },
-
         filterFields () {
             if (this.currView >= 0 && this.views.length > 0) {
                 let cols = this.views[this.currView].cols;
@@ -272,9 +262,6 @@ export default {
 
                 this.$http.get(url, currConn.user, currConn.pass).then(({ rows = [] }) => {
                     this.docs = rows.map(row => row.doc) || [];
-
-                    // update pagination
-                    this.updateNumPages(null, this.docs.length);
 
                     if (this.docs.length > 0) {
                         let fields = Object.keys(this.docs[0]);

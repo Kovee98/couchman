@@ -21,7 +21,6 @@
                 table-variant="light"
                 :busy="loading"
                 @row-clicked="open"
-                @filtered="updateNumPages"
                 outlined
                 striped
                 fixed
@@ -39,22 +38,21 @@
             </b-table>
         </div>
 
-        <PaginationControls
-            :curr-page="currPage"
-            :num-pages="numPages"
+        <b-pagination
+            v-model="currPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
         />
+
     </div>
 </template>
 
 <script>
 import format from '../js/format';
-import PaginationControls from '@/components/PaginationControls';
 
 export default {
     name: 'DatabaseTable',
-    components: {
-        PaginationControls
-    },
     props: {
         curr: {
             type: Number,
@@ -72,7 +70,6 @@ export default {
             dbs: [],
             perPage: 10,
             currPage: 1,
-            numPages: 0,
             fields: [
                 {
                     key: 'name',
@@ -108,6 +105,11 @@ export default {
             loading: false
         };
     },
+    computed: {
+        totalRows () {
+            return this.dbs.length;
+        }
+    },
     watch: {
         curr: function () {
             this.load();
@@ -129,18 +131,6 @@ export default {
         });
     },
     methods: {
-        updateNumPages (items = [], count = 0) {
-            let rem = count % this.perPage;
-            let numPages = Math.floor(count / this.perPage);
-            this.numPages = rem > 0 ? numPages + 1 : numPages;
-
-            if (this.currPage > this.numPages) {
-                this.currPage = this.numPages || 1;
-            } else if (this.currPage === 0) {
-                this.currPage = 1;
-            }
-        },
-
         open (db) {
             this.$router.push(`/dbs/${db.name}`);
         },
@@ -193,9 +183,6 @@ export default {
                                 doc_count: db.doc_count
                             };
                         });
-
-                        // update pagination
-                        this.updateNumPages(null, this.dbs.length);
                     }).catch((err) => {
                         this.$events.$emit('alert-open', {
                             variant: 'danger',
