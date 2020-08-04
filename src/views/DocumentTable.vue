@@ -186,10 +186,6 @@ export default {
         this.$events.$on('refresh', (e) => {
             this.load();
         });
-
-        this.$events.$on('set-curr-page', (currPage) => {
-            this.currPage = currPage;
-        });
     },
     methods: {
         filterFields () {
