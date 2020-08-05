@@ -168,15 +168,7 @@ export default {
         }
     },
     watch: {
-        curr: function () {
-            this.load();
-        },
-
-        conns: function () {
-            this.load();
-        },
-
-        currView: function () {
+        currView () {
             this.filterFields();
         }
     },
