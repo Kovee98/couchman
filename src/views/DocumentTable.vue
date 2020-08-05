@@ -83,7 +83,7 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
-                :busy="loading"
+                :busy="isBusy"
                 @row-clicked="edit"
                 class="mt-3"
                 outlined
@@ -142,7 +142,7 @@ export default {
             fields: [],
             filteredFields: [],
             cols: [],
-            loading: false
+            isBusy: false
         };
     },
     computed: {
@@ -242,7 +242,7 @@ export default {
         },
 
         load () {
-            this.loading = true;
+            this.isBusy = true;
             let currConn = this.conns[this.curr];
 
             if (currConn && currConn.url && this.$route.params.db) {
@@ -272,7 +272,7 @@ export default {
 
                     this.$log.error(err);
                 }).finally(() => {
-                    this.loading = false;
+                    this.isBusy = false;
                 });
             }
         }

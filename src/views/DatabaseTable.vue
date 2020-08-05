@@ -19,7 +19,7 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
-                :busy="loading"
+                :busy="isBusy"
                 @row-clicked="open"
                 outlined
                 striped
@@ -102,7 +102,7 @@ export default {
                     class: 'actions'
                 }
             ],
-            loading: false
+            isBusy: false
         };
     },
     computed: {
@@ -160,7 +160,7 @@ export default {
         },
 
         load () {
-            this.loading = true;
+            this.isBusy = true;
             let currConn = this.conns[this.curr];
 
             if (currConn && currConn.url) {
@@ -195,7 +195,7 @@ export default {
 
                     this.$log.error(err);
                 }).finally(() => {
-                    this.loading = false;
+                    this.isBusy = false;
                 });
             }
         }
