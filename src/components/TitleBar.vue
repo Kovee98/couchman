@@ -17,7 +17,7 @@
 
 <script>
 export default {
-    name: 'NavigationBar',
+    name: 'TitleBar',
     props: {
         curr: {
             type: Number,
