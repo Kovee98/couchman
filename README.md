@@ -1,4 +1,4 @@
-# Couchman
+# Couchman [![Build Status](https://travis-ci.com/Kovee98/couchman.svg?branch=develop)](https://travis-ci.com/Kovee98/couchman)
 > A multi-instance CouchDB manager with filtering, sorting, and a simple view system. Meant to be simple, intuitive, and persistent.
 
 This project set out to accomplish a handful of core features:
