@@ -15,8 +15,6 @@ script:
   - npm run build
 
 before_deploy:
-  - rm -rf release
-  - mkdir -p release
   - zip -jr couchman-${TRAVIS_TAG}.zip dist
   - tar -zcf couchman-${TRAVIS_TAG}.tar.gz dist
 
