@@ -20,8 +20,7 @@ before_deploy:
 
 deploy:
   - provider: releases
-    api_key:
-      secure: $GITHUB_TOKEN
+    api_key: $GITHUB_TOKEN
     files:
       - "couchman-${TRAVIS_TAG}.zip"
       - "couchman-${TRAVIS_TAG}.tar.gz"
