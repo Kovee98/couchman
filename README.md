@@ -12,7 +12,7 @@ This project set out to accomplish a handful of core features:
 ## Getting Started
 ### Docker (recommended):
 ```
-docker run -it -p 8080:8080 --rm --name couchman kovee98/couchman:latest
+docker run -d -p 8080:80 --name couchman kovee98/couchman:latest
 ```
 
 ### Http Server

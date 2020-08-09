@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint",
     "image:build": "docker build -t kovee98/couchman:test .",
     "image:push": "docker push kovee98/couchman:test",
-    "image:run": "docker run -it -p 8080:8080 --rm --name couchman-test kovee98/couchman:test",
+    "image:run": "docker run -d -p 8080:80 --name couchman-test kovee98/couchman:test",
     "gulp:sass": "npx gulp sass"
   },
   "dependencies": {
