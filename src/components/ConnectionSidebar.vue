@@ -89,8 +89,10 @@ export default {
         },
 
         activate (i) {
-            this.$store.dispatch('connections/activate', i);
-            this.$events.$emit('refresh');
+            if (i !== this.curr) {
+                this.$store.dispatch('connections/activate', i);
+                this.$events.$emit('refresh');
+            }
         },
 
         update (i, conn) {
