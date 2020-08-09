@@ -1,11 +1,28 @@
 <template>
-    <div>
-        <b-form-input
-            v-model="filter"
-            type="search"
-            placeholder="Filter dbs..."
-            class="my-3"
-        />
+    <div class="mt-4">
+        <div class="pt-3">
+            <b-button
+                variant="primary"
+                v-b-toggle.dbs-filter-collapse
+            >
+                Filter
+                <b-icon-funnel
+                    font-scale="0.95"
+                    class="ml-1"
+                />
+            </b-button>
+        </div>
+
+        <b-collapse id="dbs-filter-collapse">
+            <b-card>
+                <b-form-input
+                    v-model="filter"
+                    type="search"
+                    placeholder="Filter dbs..."
+                />
+            </b-card>
+        </b-collapse>
+
         <div
             class="mb-3"
             style="height: 550px"
@@ -21,6 +38,7 @@
                 table-variant="light"
                 :busy="isBusy"
                 @row-clicked="open"
+                class="mt-3"
                 outlined
                 striped
                 fixed

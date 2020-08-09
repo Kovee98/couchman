@@ -1,9 +1,21 @@
 <template>
     <div class="mt-4">
         <div class="pt-3">
+            <b-button
+                variant="primary"
+                v-b-toggle.docs-filter-collapse
+            >
+                Filter
+                <b-icon-funnel
+                    font-scale="0.95"
+                    class="ml-1"
+                />
+            </b-button>
+
             <b-dropdown
                 id="view-dropdown"
                 variant="primary"
+                class="ml-2"
             >
                 <template v-slot:button-content>
                     <b-icon-eye
@@ -46,21 +58,9 @@
                     />
                 </b-dropdown-item>
             </b-dropdown>
-
-            <b-button
-                variant="primary"
-                v-b-toggle.filter-collapse
-                class="ml-2"
-            >
-                Filter
-                <b-icon-funnel
-                    font-scale="0.95"
-                    class="ml-1"
-                />
-            </b-button>
         </div>
 
-        <b-collapse id="filter-collapse">
+        <b-collapse id="docs-filter-collapse">
             <b-card>
                 <b-form-input
                     v-model="filter"
