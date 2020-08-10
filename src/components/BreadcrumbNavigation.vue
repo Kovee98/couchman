@@ -1,6 +1,9 @@
 <template>
     <div>
-        <b-breadcrumb class="px-0 my-4 h5">
+        <b-breadcrumb
+            v-if="$route.fullPath.includes('/dbs')"
+            class="px-0 my-4 h5"
+        >
             <b-breadcrumb-item href="/#/dbs">
                 Databases
             </b-breadcrumb-item>
