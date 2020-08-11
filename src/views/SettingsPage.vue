@@ -73,11 +73,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-    .opt {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-    }
-</style>
