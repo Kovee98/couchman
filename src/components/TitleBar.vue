@@ -13,6 +13,13 @@
                 <b-nav-item v-b-toggle.conns-sidebar>
                     Connections
                 </b-nav-item>
+
+                <b-nav-item
+                    href="/#/settings"
+                    right
+                >
+                    Settings
+                </b-nav-item>
             </b-navbar-nav>
         </b-navbar>
     </div>
