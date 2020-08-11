@@ -69,3 +69,13 @@ td {
     cursor: pointer;
     color: #007bff !important;
 }
+
+.flex-middle {
+    display: flex;
+    align-items: center;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+}
