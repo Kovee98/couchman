@@ -78,7 +78,7 @@ export default {
         return {
             name: '',
             col: '',
-            cols: ['age', 'name', 'animal']
+            cols: []
         };
     },
     methods: {
