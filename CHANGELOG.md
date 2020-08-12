@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Settings page
 - Ability to clear all app data
+- View scoping
 
 ### Improved
 - Database/Document filtering input UX consistency
