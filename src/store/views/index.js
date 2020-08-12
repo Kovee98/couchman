@@ -7,15 +7,19 @@ export default {
     namespaced: true,
     state: {
         curr: -1,
-        views: []
+        views: {}
     },
     getters: {
-        views: (state) => state.views,
+        views: (state) => (scope) => {
+            return state.views[scope];
+        },
         curr: (state) => state.curr
     },
     mutations: {
         add (state, view) {
-            state.views.push(view);
+            let views = state.views[view.scope] || [];
+            views.push(view);
+            state.views[view.scope] = views;
         },
         remove (state, i) {
             state.views.splice(i, 1);

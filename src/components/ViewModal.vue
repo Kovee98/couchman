@@ -74,6 +74,17 @@
 <script>
 export default {
     name: 'ViewModal',
+    props: {
+        curr: {
+            type: Number,
+            required: true
+        },
+
+        conns: {
+            type: Array,
+            required: true
+        }
+    },
     data () {
         return {
             name: '',
@@ -83,8 +94,10 @@ export default {
     },
     methods: {
         save () {
+            let currConn = this.conns[this.curr];
             this.$store.dispatch('views/add', {
                 view: {
+                    scope: `${currConn.id}/${this.$route.params.db}`,
                     name: this.name,
                     cols: this.cols
                 }

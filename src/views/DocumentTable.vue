@@ -110,7 +110,7 @@
             align="center"
         />
 
-        <ViewModal/>
+        <ViewModal :curr="curr" :conns="conns"/>
     </div>
 </template>
 
@@ -151,7 +151,8 @@ export default {
         },
 
         views () {
-            return this.$store.getters['views/views'];
+            let currConn = this.conns[this.curr];
+            return this.$store.getters['views/views'](`${currConn.id}/${this.$route.params.db}`);
         },
 
         currView () {
