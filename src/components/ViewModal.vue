@@ -104,11 +104,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-    .clickable {
-        :hover {
-            color: red;
-        }
-    }
-</style>
