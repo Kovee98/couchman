@@ -50,7 +50,7 @@
 
                 <b-dropdown-divider/>
 
-                <b-dropdown-item v-b-modal.views>
+                <b-dropdown-item v-b-modal.view-modal>
                     Create View
                     <b-icon-plus-circle
                         font-scale="0.95"

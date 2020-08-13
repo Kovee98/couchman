@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-modal
-            id="views"
+            id="view-modal"
             ok-title="Save"
             cancel-variant="outline-secondary"
             @show="reset"
@@ -75,7 +75,19 @@ export default {
         }
     },
     methods: {
-        save () {
+        save (e) {
+            if (!this.name) {
+                // don't close modal
+                e.preventDefault();
+
+                this.$events.$emit('alert-open', {
+                    variant: 'danger',
+                    msg: 'Missing required field(s): name'
+                });
+
+                return;
+            }
+
             let cols = this.buttons.reduce((acc, curr) => {
                 if (curr.state) {
                     acc.push(curr.key);
