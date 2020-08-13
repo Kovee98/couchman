@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="connection">
+        <b-modal id="connection-modal">
             <template
                 v-slot:modal-title
                 class="capitalize"
@@ -153,7 +153,7 @@ export default {
             this.form.user = '';
             this.form.pass = '';
 
-            this.$bvModal.show('connection');
+            this.$bvModal.show('connection-modal');
         });
 
         this.$events.$on('connection-update', (i, conn) => {
@@ -167,7 +167,7 @@ export default {
             this.form.user = conn.user || '';
             this.form.pass = conn.pass || '';
 
-            this.$bvModal.show('connection');
+            this.$bvModal.show('connection-modal');
         });
     },
     methods: {
@@ -193,7 +193,7 @@ export default {
                 conn: conn
             });
 
-            this.$bvModal.hide('connection');
+            this.$bvModal.hide('connection-modal');
         },
 
         validate (conn) {
