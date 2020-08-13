@@ -172,12 +172,12 @@ export default {
     },
     methods: {
         submit () {
-            let conn = this.getConn();
+            const conn = this.getConn();
 
-            let invalid = this.validate(conn);
+            const invalid = this.validate(conn);
 
             if (invalid.length > 0) {
-                let fields = invalid.join(', ');
+                const fields = invalid.join(', ');
                 this.$events.$emit('alert-open', {
                     variant: 'danger',
                     msg: `Missing required field(s): ${fields}`
@@ -187,7 +187,7 @@ export default {
 
             this.$events.$emit('alert-close');
 
-            let action = `connections/${this.action}`;
+            const action = `connections/${this.action}`;
             this.$store.dispatch(action, {
                 i: this.index,
                 conn: conn
@@ -197,7 +197,7 @@ export default {
         },
 
         validate (conn) {
-            let invalid = [];
+            const invalid = [];
 
             if (!conn.name) invalid.push('name');
             if (!conn.url) invalid.push('url');
@@ -208,7 +208,7 @@ export default {
         },
 
         getConn () {
-            let baseUrl = this.form.url;
+            const baseUrl = this.form.url;
             let url = baseUrl;
             if (baseUrl && this.form.user && this.form.pass) {
                 url = baseUrl.split('//');
@@ -225,7 +225,7 @@ export default {
         },
 
         test () {
-            let conn = this.getConn();
+            const conn = this.getConn();
             this.isValid = null;
             this.isTesting = true;
 

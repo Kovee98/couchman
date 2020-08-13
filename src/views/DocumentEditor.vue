@@ -86,12 +86,11 @@ export default {
         },
 
         save (e) {
-            let doc = this.codemirror.getValue();
-            doc = JSON.parse(doc);
+            const doc = JSON.parse(this.codemirror.getValue());
             this.loading = true;
 
             if (this.currConn && this.currConn.url && this.$route.params.doc) {
-                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
                 this.$http.put(url, this.currConn.user, this.currConn.pass, {
                     body: JSON.stringify(doc)
@@ -115,7 +114,7 @@ export default {
             this.doc = '';
 
             if (this.currConn && this.currConn.url && this.$route.params.doc) {
-                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
                 this.$http.get(url, this.currConn.user, this.currConn.pass).then((data) => {
                     this.doc = JSON.stringify(data, null, 4);

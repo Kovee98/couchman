@@ -15,7 +15,7 @@ module.exports = {
         'generator-star-spacing': 'off',
         // allow paren-less arrow functions
         'arrow-parens': 'off',
-        'one-var': 'off',
+        'one-var': ['error', 'never'],
 
         'import/first': 'off',
         'import/named': 'error',
@@ -26,7 +26,8 @@ module.exports = {
         'import/no-unresolved': 'off',
         'import/no-extraneous-dependencies': 'off',
         'prefer-promise-reject-errors': 'off',
-        'prefer-const': 'off',
+        'prefer-const': 'error',
+        'no-var': 'error',
 
         // allow console.log during development only
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
