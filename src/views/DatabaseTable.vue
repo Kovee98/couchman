@@ -72,14 +72,9 @@ import format from '../js/format';
 export default {
     name: 'DatabaseTable',
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -129,11 +124,7 @@ export default {
         }
     },
     watch: {
-        curr: function () {
-            this.load();
-        },
-
-        conns: function () {
+        currConn: function () {
             this.load();
         }
     },
@@ -150,7 +141,6 @@ export default {
         },
 
         remove (row) {
-            let currConn = this.conns[this.curr];
             this.$events.$emit('confirm', {
                 title: 'Delete Database?',
                 body: `Deleting "${row.item.name}" will be permanent and cannot be undone.`,
@@ -158,8 +148,8 @@ export default {
                     text: 'Yes, delete database',
                     variant: 'danger',
                     action: () => {
-                        let url = `${currConn.baseUrl}/${row.item.name}`;
-                        this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                        let url = `${this.currConn.baseUrl}/${row.item.name}`;
+                        this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                             this.$events.$emit('alert-open', {
                                 variant: 'danger',
                                 msg: `${err.message} (${(err.response || {}).statusText || ''})`
@@ -179,13 +169,12 @@ export default {
 
         load () {
             this.isBusy = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url) {
-                this.$http.get(`${currConn.baseUrl}/_all_dbs`, currConn.user, currConn.pass).then((dbs) => {
+            if (this.currConn && this.currConn.url) {
+                this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
                     let queued = [];
                     dbs.forEach((db) => {
-                        queued.push(this.$http.get(`${currConn.baseUrl}/${db}`, currConn.user, currConn.pass));
+                        queued.push(this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass));
                     });
 
                     Promise.all(queued).then((dbs) => {
