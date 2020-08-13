@@ -40,7 +40,7 @@ export default {
     props: {
         currConn: {
             type: Object,
-            required: true
+            required: false
         }
     },
     data () {
