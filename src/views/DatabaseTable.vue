@@ -43,6 +43,14 @@
                 striped
                 fixed
             >
+                <template v-slot:head(actions)>
+                    <b-icon-arrow-clockwise
+                        @click="load"
+                        font-scale="1.25"
+                        class="clickable float-right"
+                    />
+                </template>
+
                 <template v-slot:cell(actions)="row">
                     <span class="float-right">
                         <div
