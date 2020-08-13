@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Reactivation of current connection
 - Documents not loading after a refresh
+- Errors on connection switching
 
 ## [1.0.1] - 2020-08-09
 ### Fixed
