@@ -110,7 +110,7 @@
             align="center"
         />
 
-        <ViewModal/>
+        <ViewModal :fields="fields"/>
     </div>
 </template>
 
