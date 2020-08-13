@@ -66,7 +66,6 @@ export default {
     },
     watch: {
         fields () {
-            // TODO: remove 'actions' from selection - it'll always be last so remove the last field?
             this.buttons = this.fields.map((field) => {
                 return {
                     ...field,
