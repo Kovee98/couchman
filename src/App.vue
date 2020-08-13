@@ -1,9 +1,6 @@
 <template>
     <div id="app">
-        <TitleBar
-            :curr="curr"
-            :conns="conns"
-        />
+        <TitleBar/>
 
         <AlertMessage/>
 
@@ -17,10 +14,7 @@
         <b-container>
             <BreadcrumbNavigation/>
 
-            <router-view
-                :curr="curr"
-                :conns="conns"
-            />
+            <router-view :currConn="currConn"/>
         </b-container>
     </div>
 </template>
@@ -46,8 +40,13 @@ export default {
         curr () {
             return this.$store.getters['connections/curr'];
         },
+
         conns () {
             return this.$store.getters['connections/conns'];
+        },
+
+        currConn () {
+            return this.conns[this.curr];
         }
     },
     created () {

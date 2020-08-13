@@ -38,14 +38,9 @@ export default {
         codemirror
     },
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -74,11 +69,7 @@ export default {
         }
     },
     watch: {
-        curr () {
-            this.load();
-        },
-
-        conns () {
+        currConn () {
             this.load();
         }
     },
@@ -98,12 +89,11 @@ export default {
             let doc = this.codemirror.getValue();
             doc = JSON.parse(doc);
             this.loading = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.doc) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+            if (this.currConn && this.currConn.url && this.$route.params.doc) {
+                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
-                this.$http.put(url, currConn.user, currConn.pass, {
+                this.$http.put(url, this.currConn.user, this.currConn.pass, {
                     body: JSON.stringify(doc)
                 }).then((res) => {
                     this.$router.go(-1);
@@ -123,12 +113,11 @@ export default {
         load () {
             this.loading = true;
             this.doc = '';
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.doc) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+            if (this.currConn && this.currConn.url && this.$route.params.doc) {
+                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
-                this.$http.get(url, currConn.user, currConn.pass).then((data) => {
+                this.$http.get(url, this.currConn.user, this.currConn.pass).then((data) => {
                     this.doc = JSON.stringify(data, null, 4);
                     this.show = true;
                 }).catch((err) => {

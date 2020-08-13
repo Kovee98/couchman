@@ -123,14 +123,9 @@ export default {
         ViewModal
     },
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -170,6 +165,10 @@ export default {
     watch: {
         currView () {
             this.filterFields();
+        },
+
+        currConn: function () {
+            this.load();
         }
     },
     mounted () {
@@ -212,8 +211,7 @@ export default {
         },
 
         remove (row) {
-            let currConn = this.conns[this.curr];
-            if (currConn && currConn.url) {
+            if (this.currConn && this.currConn.url) {
                 this.$events.$emit('confirm', {
                     title: 'Delete Document?',
                     body: `Deleting "${row.item._id}" will be permanent and cannot be undone.`,
@@ -221,8 +219,8 @@ export default {
                         text: 'Yes, delete document',
                         variant: 'danger',
                         action: () => {
-                            let url = `${currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
-                            this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                            let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
+                            this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                                 this.$events.$emit('alert-open', {
                                     variant: 'danger',
                                     msg: `${err.message} (${(err.response || {}).statusText || ''})`
@@ -243,12 +241,11 @@ export default {
 
         load () {
             this.isBusy = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.db) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
+            if (this.currConn && this.currConn.url && this.$route.params.db) {
+                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
 
-                this.$http.get(url, currConn.user, currConn.pass).then(({ rows = [] }) => {
+                this.$http.get(url, this.currConn.user, this.currConn.pass).then(({ rows = [] }) => {
                     this.docs = rows.map(row => row.doc) || [];
 
                     if (this.docs.length > 0) {

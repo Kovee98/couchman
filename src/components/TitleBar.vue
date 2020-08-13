@@ -28,17 +28,6 @@
 <script>
 export default {
     name: 'TitleBar',
-    props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
-        }
-    },
     data () {
         return {
             logo: {

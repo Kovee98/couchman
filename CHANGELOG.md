@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Database/Document filtering input UX consistency
 - View creation to use toggle buttons instead of manually typing out the columns to add to the view
 - View name is required now
+- Simplified retreival of the current connection object
 
 ### Fixed
 - Reactivation of current connection
+- Documents not loading after a refresh
 
 ## [1.0.1] - 2020-08-09
 ### Fixed
