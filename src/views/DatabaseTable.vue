@@ -148,7 +148,7 @@ export default {
                     text: 'Yes, delete database',
                     variant: 'danger',
                     action: () => {
-                        let url = `${this.currConn.baseUrl}/${row.item.name}`;
+                        const url = `${this.currConn.baseUrl}/${row.item.name}`;
                         this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                             this.$events.$emit('alert-open', {
                                 variant: 'danger',
@@ -172,7 +172,7 @@ export default {
 
             if (this.currConn && this.currConn.url) {
                 this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
-                    let queued = [];
+                    const queued = [];
                     dbs.forEach((db) => {
                         queued.push(this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass));
                     });

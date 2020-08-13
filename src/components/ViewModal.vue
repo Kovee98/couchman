@@ -88,7 +88,7 @@ export default {
                 return;
             }
 
-            let cols = this.buttons.reduce((acc, curr) => {
+            const cols = this.buttons.reduce((acc, curr) => {
                 if (curr.state) {
                     acc.push(curr.key);
                 }

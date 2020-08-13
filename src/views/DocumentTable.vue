@@ -155,7 +155,7 @@ export default {
 
         viewName () {
             if (this.views && this.currView >= 0) {
-                let view = this.views[this.currView];
+                const view = this.views[this.currView];
                 return view ? view.name : 'None';
             }
 
@@ -180,9 +180,10 @@ export default {
     },
     methods: {
         filterFields () {
+            let filteredFields = [];
             if (this.currView >= 0 && this.views.length > 0) {
-                let cols = this.views[this.currView].cols;
-                var filteredFields = this.fields.filter(field => cols.includes(field.key));
+                const cols = this.views[this.currView].cols;
+                filteredFields = this.fields.filter(field => cols.includes(field.key));
             } else {
                 filteredFields = this.fields;
             }
@@ -219,7 +220,7 @@ export default {
                         text: 'Yes, delete document',
                         variant: 'danger',
                         action: () => {
-                            let url = `${this.currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
+                            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
                             this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                                 this.$events.$emit('alert-open', {
                                     variant: 'danger',
@@ -243,7 +244,7 @@ export default {
             this.isBusy = true;
 
             if (this.currConn && this.currConn.url && this.$route.params.db) {
-                let url = `${this.currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
 
                 this.$http.get(url, this.currConn.user, this.currConn.pass).then(({ rows = [] }) => {
                     this.docs = rows.map(row => row.doc) || [];
