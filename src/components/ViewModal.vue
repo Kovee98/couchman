@@ -74,6 +74,12 @@
 <script>
 export default {
     name: 'ViewModal',
+    props: {
+        fields: {
+            type: Array,
+            required: true
+        }
+    },
     data () {
         return {
             name: '',
