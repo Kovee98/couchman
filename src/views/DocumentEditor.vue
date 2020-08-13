@@ -75,10 +75,6 @@ export default {
     },
     mounted () {
         this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
     },
     methods: {
         cancel () {

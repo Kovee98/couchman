@@ -91,7 +91,6 @@ export default {
         activate (i) {
             if (i !== this.curr) {
                 this.$store.dispatch('connections/activate', i);
-                this.$events.$emit('refresh');
             }
         },
 
