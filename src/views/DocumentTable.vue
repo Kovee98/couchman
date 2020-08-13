@@ -170,6 +170,14 @@ export default {
     watch: {
         currView () {
             this.filterFields();
+        },
+
+        curr: function () {
+            this.load();
+        },
+
+        conns: function () {
+            this.load();
         }
     },
     mounted () {
