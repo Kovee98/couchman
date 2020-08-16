@@ -1,17 +1,19 @@
 <template>
-    <div class="mt-4">
+    <div class="editor">
         <b-overlay
             :show="loading"
             rounded="sm"
+            class="h-100"
         >
             <codemirror
                 v-model="doc"
                 :options="opts"
                 ref="editor"
+                class="h-100"
             />
         </b-overlay>
 
-        <span class="float-right">
+        <span class="py-3 float-right">
             <b-button
                 variant="outline-secondary"
                 @click="cancel"
@@ -19,7 +21,7 @@
                 Cancel
             </b-button>
             <b-button
-                variant="primary"
+                variant="success"
                 @click="save"
                 class="ml-2"
             >
@@ -48,7 +50,8 @@ export default {
             show: false,
             doc: '',
             opts: {
-                tabSize: 2,
+                tabSize: 4,
+                indentUnit: 4,
                 mode: 'application/json',
                 lineNumbers: true,
                 smartIndent: true,
@@ -130,3 +133,58 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+    $height: 45rem;
+    $background: rgb(32, 32, 32);
+    $text: #eeeeee;
+    $color: transparentize($text, 0.25);
+    $lineNumbers: transparentize($text, 0.75);
+
+    .editor {
+        height: $height;
+        font-size: 0.9rem;
+        background: $background;
+        cursor: text;
+    }
+    .CodeMirror {
+        height: $height !important;
+        color: $color !important;
+        background: transparent !important;
+    }
+    div.CodeMirror-selected {
+        background: lighten($background, 5%) !important;
+    }
+    .CodeMirror-guttermarker, .CodeMirror-guttermarker-subtle {
+        color: transparent !important;
+    }
+    .CodeMirror-gutters {
+        background: transparent !important;
+        border-right: none !important;
+    }
+    .CodeMirror-cursor {
+        border-left: 1px solid $color !important;
+    }
+    .CodeMirror-linenumber {
+        color: $lineNumbers !important;
+    }
+    .CodeMirror-matchingbracket, .CodeMirror-nonmatchingbracket {
+        color: lighten($color, 50%) !important;
+        background: lighten($background, 10%) !important;
+        outline: 1px solid $color;
+    }
+    .CodeMirror-activeline-background {
+        background: lighten($background, 2%) !important;
+    }
+
+    // syntax colors
+    $key: #80ff00;
+    $string: #e7db74;
+    $number: #ac80ff;
+    $atom: #ac80ff;
+
+    span.cm-string { color: $string !important }
+    span.cm-keyword, span.cm-variable, span.cm-property { color: $key !important }
+    span.cm-number { color: $number !important }
+    span.cm-atom { color: $atom !important }
+</style>
