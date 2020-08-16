@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - View name is required now
 - Simplified retreival of the current connection object
 - Updated codebase to follow stricter variable declaration practices for improved readability and maintainability
+- Look and feel of the document editor
 
 ### Fixed
 - Reactivation of current connection
