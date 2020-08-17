@@ -15,13 +15,11 @@
                     @click="openAttachment(att)"
                 >
                     {{att}}
-                    <span class="float-right">
-                        <div
-                            class="remove"
-                            @click.stop="removeAttachment(att)"
-                        >
-                            <b-icon-trash font-scale="0.99"/>
-                        </div>
+                    <span
+                        @click.stop="removeAttachment(att)"
+                        class="ml-3 remove"
+                    >
+                        <b-icon-trash font-scale="0.99"/>
                     </span>
                 </b-dropdown-item>
 
@@ -29,10 +27,7 @@
 
                 <b-dropdown-item v-b-modal.upload-attachment-modal>
                     Upload
-                    <b-icon-arrow-bar-up
-                        font-scale="1.25"
-                        class="float-right"
-                    />
+                    <b-icon-arrow-bar-up font-scale="1.25"/>
                 </b-dropdown-item>
             </b-dropdown>
 
@@ -100,7 +95,7 @@ export default {
                 smartIndent: true,
                 lineWrapping: true,
                 lineWiseCopyCut: false,
-                scrollbarStyle: 'null',
+                scrollbarStyle: 'native',
                 showCursorWhenSelecting: true,
                 autoCloseBrackets: true,
                 matchBrackets: true,
@@ -216,7 +211,7 @@ export default {
 </script>
 
 <style lang="scss">
-    $height: 45rem;
+    $height: 40rem;
     $background: rgb(32, 32, 32);
     $text: #eeeeee;
     $color: transparentize($text, 0.25);
