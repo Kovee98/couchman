@@ -100,7 +100,7 @@ export default {
                 smartIndent: true,
                 lineWrapping: true,
                 lineWiseCopyCut: false,
-                scrollbarStyle: 'null',
+                scrollbarStyle: 'native',
                 showCursorWhenSelecting: true,
                 autoCloseBrackets: true,
                 matchBrackets: true,
