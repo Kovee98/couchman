@@ -6,11 +6,10 @@ function _call (method, url, user = '', pass = '', opts = {}) {
         };
     }
 
-    opts.headers = {
-        ...opts.headers,
+    opts.headers = Object.assign({
         Accept: 'application/json',
         'Content-Type': 'application/json'
-    };
+    }, opts.headers);
 
     return fetch(url, {
         ...opts,
@@ -18,7 +17,7 @@ function _call (method, url, user = '', pass = '', opts = {}) {
     }).then(res => res.json());
 }
 
-let http = {
+const http = {
     get: function (...args) {
         return _call('get', ...args);
     },

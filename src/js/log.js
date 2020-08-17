@@ -11,7 +11,7 @@
 */
 
 /* eslint-disable no-console */
-let log = {
+const log = {
     level: 1,
     error: (...args) => {
         if (log.level >= 0) {
