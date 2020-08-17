@@ -1,43 +1,86 @@
 <template>
-    <div class="editor">
-        <b-overlay
-            :show="loading"
-            rounded="sm"
-            class="h-100"
-        >
-            <codemirror
-                v-model="doc"
-                :options="opts"
-                ref="editor"
-                class="h-100"
-            />
-        </b-overlay>
+    <div>
+        <div>
+            <b-dropdown
+                id="attachment-dropdown"
+                variant="primary"
+            >
+                <template v-slot:button-content>
+                    Attachments
+                </template>
 
-        <span class="py-3 float-right">
-            <b-button
-                variant="outline-secondary"
-                @click="cancel"
+                <b-dropdown-item
+                    v-for="att in atts"
+                    :key="att.id"
+                    @click="openAttachment(att)"
+                >
+                    {{att}}
+                    <span class="float-right">
+                        <div
+                            class="remove"
+                            @click.stop="removeAttachment(att)"
+                        >
+                            <b-icon-trash font-scale="0.99"/>
+                        </div>
+                    </span>
+                </b-dropdown-item>
+
+                <b-dropdown-divider v-if="atts.length > 0"/>
+
+                <b-dropdown-item v-b-modal.upload-attachment-modal>
+                    Upload
+                    <b-icon-arrow-bar-up
+                        font-scale="1.25"
+                        class="float-right"
+                    />
+                </b-dropdown-item>
+            </b-dropdown>
+
+            <UploadAttachmentModal :currConn="currConn"/>
+        </div>
+
+        <div class="mt-3 editor">
+            <b-overlay
+                :show="loading"
+                rounded="sm"
+                class="h-100"
             >
-                Cancel
-            </b-button>
-            <b-button
-                variant="success"
-                @click="save"
-                class="ml-2"
-            >
-                Save
-            </b-button>
-        </span>
+                <codemirror
+                    v-model="doc"
+                    :options="opts"
+                    ref="editor"
+                    class="h-100"
+                />
+            </b-overlay>
+
+            <span class="py-3 float-right">
+                <b-button
+                    variant="outline-secondary"
+                    @click="cancel"
+                >
+                    Cancel
+                </b-button>
+                <b-button
+                    variant="success"
+                    @click="save"
+                    class="ml-2"
+                >
+                    Save
+                </b-button>
+            </span>
+        </div>
     </div>
 </template>
 
 <script>
 import { codemirror } from 'vue-codemirror';
+import UploadAttachmentModal from '@/components/UploadAttachmentModal';
 
 export default {
     name: 'DocumentEditor',
     components: {
-        codemirror
+        codemirror,
+        UploadAttachmentModal
     },
     props: {
         currConn: {
@@ -69,12 +112,22 @@ export default {
     computed: {
         codemirror () {
             return this.$refs.editor.codemirror;
+        },
+
+        atts () {
+            const doc = JSON.parse(this.doc || '{}');
+            return Object.keys(doc._attachments || {});
         }
     },
     watch: {
         currConn () {
             this.load();
         }
+    },
+    created () {
+        this.$events.$on('refresh', () => {
+            this.load();
+        });
     },
     mounted () {
         this.load();
@@ -129,6 +182,34 @@ export default {
                     this.loading = false;
                 });
             }
+        },
+
+        openAttachment (att) {
+            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}/${att}`;
+            window.open(url);
+        },
+
+        removeAttachment (att) {
+            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+
+            this.$http.get(url, this.currConn.user, this.currConn.pass).then((doc) => {
+                this.$http.delete(`${url}/${att}?rev=${doc._rev}`, this.currConn.user, this.currConn.pass)
+                    .then((res) => {
+                        this.$events.$emit('alert-open', {
+                            variant: 'success',
+                            msg: 'Attachment deleted'
+                        });
+                        this.$events.$emit('refresh');
+                    })
+                    .catch((err) => {
+                        this.$events.$emit('alert-open', {
+                            variant: 'danger',
+                            msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                        });
+
+                        this.$log.error(err);
+                    });
+            });
         }
     }
 };
