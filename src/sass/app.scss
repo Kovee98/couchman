@@ -91,3 +91,13 @@ td {
 .table-wrapper {
     min-height: 35rem;
 }
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    :last-child {
+        margin-left: .5rem;
+    }
+}

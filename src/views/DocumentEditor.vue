@@ -15,13 +15,11 @@
                     @click="openAttachment(att)"
                 >
                     {{att}}
-                    <span class="float-right">
-                        <div
-                            class="remove"
-                            @click.stop="removeAttachment(att)"
-                        >
-                            <b-icon-trash font-scale="0.99"/>
-                        </div>
+                    <span
+                        @click.stop="removeAttachment(att)"
+                        class="ml-3 remove"
+                    >
+                        <b-icon-trash font-scale="0.99"/>
                     </span>
                 </b-dropdown-item>
 
@@ -29,10 +27,7 @@
 
                 <b-dropdown-item v-b-modal.upload-attachment-modal>
                     Upload
-                    <b-icon-arrow-bar-up
-                        font-scale="1.25"
-                        class="float-right"
-                    />
+                    <b-icon-arrow-bar-up font-scale="1.25"/>
                 </b-dropdown-item>
             </b-dropdown>
 
