@@ -186,7 +186,7 @@ export default {
                 const cols = this.views[this.currView].cols;
                 filteredFields = this.fields.filter(field => cols.includes(field.key));
             } else {
-                filteredFields = this.fields;
+                filteredFields = Array.from(this.fields);
             }
 
             if (filteredFields.length > 0) {
