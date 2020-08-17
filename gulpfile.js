@@ -1,6 +1,6 @@
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var rename = require('gulp-rename');
+const gulp = require('gulp');
+const sass = require('gulp-sass');
+const rename = require('gulp-rename');
 
 gulp.task('sass', function () {
     return gulp.src('./src/sass/**/*.scss')
