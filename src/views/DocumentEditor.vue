@@ -216,7 +216,7 @@ export default {
 </script>
 
 <style lang="scss">
-    $height: 45rem;
+    $height: 40rem;
     $background: rgb(32, 32, 32);
     $text: #eeeeee;
     $color: transparentize($text, 0.25);

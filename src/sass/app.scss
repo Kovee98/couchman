@@ -6,7 +6,7 @@ $primary: #009ff7;
 @import '../../node_modules/bootstrap-vue/src/index.scss';
 
 html {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 #app {
@@ -86,4 +86,8 @@ td {
 
 .custom-file-input {
     cursor: pointer;
+}
+
+.table-wrapper {
+    min-height: 35rem;
 }

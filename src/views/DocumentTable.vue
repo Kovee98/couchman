@@ -70,10 +70,7 @@
             </b-card>
         </b-collapse>
 
-        <div
-            class="mb-3"
-            style="height: 550px"
-        >
+        <div class="mb-3 table-wrapper">
             <b-table
                 :items="docs"
                 :fields="filteredFields"
