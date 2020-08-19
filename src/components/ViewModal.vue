@@ -2,7 +2,8 @@
     <div>
         <b-modal
             id="view-modal"
-            ok-title="Save"
+            ok-title="Create"
+            ok-variant="success"
             cancel-variant="outline-secondary"
             @show="reset"
             @ok="save"

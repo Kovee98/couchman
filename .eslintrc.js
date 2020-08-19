@@ -28,6 +28,7 @@ module.exports = {
         'prefer-promise-reject-errors': 'off',
         'prefer-const': 'error',
         'no-var': 'error',
+        'operator-linebreak': [2, "after"],
 
         // allow console.log during development only
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
