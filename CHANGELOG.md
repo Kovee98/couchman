@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documents not loading after a refresh
 - Errors on connection switching
 - Actions field showing up as an option when creating a view
+- Incorrect displaying of data when there shouldn't be anything being shown
 
 ## [1.0.1] - 2020-08-09
 ### Fixed
