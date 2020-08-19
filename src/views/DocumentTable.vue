@@ -25,7 +25,7 @@
                     {{viewName}}
                 </template>
                 <b-dropdown-item
-                    :active="currView === -1"
+                    :active="curr === -1"
                     @click="activate(-1)"
                 >
                     None
@@ -34,7 +34,7 @@
                     v-for="(view, i) in views"
                     :key="view.id"
                     :value="view"
-                    :active="currView === i"
+                    :active="curr === i"
                     @click="activate(i)"
                 >
                     {{view.name}}
@@ -72,7 +72,7 @@
 
         <div class="mb-3 table-wrapper">
             <b-table
-                :items="docs"
+                :items="filteredDocs"
                 :fields="filteredFields"
                 :filter="filter"
                 :per-page="perPage"
@@ -80,10 +80,13 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
+                :empty-text="emptyText"
+                empty-filtered-text="There are no records that match the search"
                 :busy="isBusy"
                 @row-clicked="edit"
                 class="mt-3"
                 outlined
+                show-empty
                 striped
                 fixed
             >
@@ -140,7 +143,6 @@ export default {
             currPage: 1,
             docs: [],
             fields: [],
-            filteredFields: [],
             cols: [],
             isBusy: false
         };
@@ -154,24 +156,48 @@ export default {
             return this.$store.getters['views/views'];
         },
 
-        currView () {
+        curr () {
             return this.$store.getters['views/curr'];
         },
 
+        currView () {
+            return this.views[this.curr];
+        },
+
         viewName () {
-            if (this.views && this.currView >= 0) {
-                const view = this.views[this.currView];
-                return view ? view.name : 'None';
+            return this.currView ? this.currView.name : 'None';
+        },
+
+        filteredDocs () {
+            return this.filteredFields.length > 1 ? this.docs : [];
+        },
+
+        filteredFields () {
+            let filteredFields = [];
+
+            if (this.currView) {
+                const cols = this.currView.cols;
+                filteredFields = this.fields.filter(field => cols.includes(field.key));
+            } else {
+                filteredFields = Array.from(this.fields);
             }
 
-            return 'None';
+            filteredFields.push({
+                key: 'actions',
+                label: '',
+                class: 'actions'
+            });
+
+            return filteredFields;
+        },
+
+        emptyText () {
+            return `${this.filteredFields.length > 1 ?
+                'There are no documents' :
+                'There are no fields that match the view'}`;
         }
     },
     watch: {
-        currView () {
-            this.filterFields();
-        },
-
         currConn: function () {
             this.load();
         }
@@ -180,26 +206,6 @@ export default {
         this.load();
     },
     methods: {
-        filterFields () {
-            let filteredFields = [];
-            if (this.currView >= 0 && this.views.length > 0) {
-                const cols = this.views[this.currView].cols;
-                filteredFields = this.fields.filter(field => cols.includes(field.key));
-            } else {
-                filteredFields = Array.from(this.fields);
-            }
-
-            if (filteredFields.length > 0) {
-                filteredFields.push({
-                    key: 'actions',
-                    label: '',
-                    class: 'actions'
-                });
-            }
-
-            this.filteredFields = filteredFields;
-        },
-
         removeView (i) {
             this.$store.dispatch('views/remove', i);
         },
@@ -261,7 +267,6 @@ export default {
                         });
 
                         this.fields = fields;
-                        this.filterFields();
                     }
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {

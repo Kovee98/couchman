@@ -33,10 +33,13 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
+                empty-text="There are no databases"
+                empty-filtered-text="There are no records that match the search"
                 :busy="isBusy"
                 @row-clicked="open"
                 class="mt-3"
                 outlined
+                show-empty
                 striped
                 fixed
             >
