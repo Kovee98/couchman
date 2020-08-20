@@ -5,6 +5,10 @@ $primary: #009ff7;
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-vue/src/index.scss';
 
+html {
+    font-size: 18px;
+}
+
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -68,4 +72,32 @@ td {
 .tr:hover > .td {
     cursor: pointer;
     color: #007bff !important;
+}
+
+.flex-middle {
+    display: flex;
+    align-items: center;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.custom-file-input {
+    cursor: pointer;
+}
+
+.table-wrapper {
+    min-height: 35rem;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    :last-child {
+        margin-left: .5rem;
+    }
 }

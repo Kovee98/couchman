@@ -1,9 +1,21 @@
 <template>
     <div class="mt-4">
         <div class="pt-3">
+            <b-button
+                variant="primary"
+                v-b-toggle.docs-filter-collapse
+            >
+                Filter
+                <b-icon-funnel
+                    font-scale="0.95"
+                    class="ml-1"
+                />
+            </b-button>
+
             <b-dropdown
                 id="view-dropdown"
                 variant="primary"
+                class="ml-2"
             >
                 <template v-slot:button-content>
                     <b-icon-eye
@@ -13,7 +25,7 @@
                     {{viewName}}
                 </template>
                 <b-dropdown-item
-                    :active="currView === -1"
+                    :active="curr === -1"
                     @click="activate(-1)"
                 >
                     None
@@ -22,7 +34,7 @@
                     v-for="(view, i) in views"
                     :key="view.id"
                     :value="view"
-                    :active="currView === i"
+                    :active="curr === i"
                     @click="activate(i)"
                 >
                     {{view.name}}
@@ -38,7 +50,7 @@
 
                 <b-dropdown-divider/>
 
-                <b-dropdown-item v-b-modal.views>
+                <b-dropdown-item v-b-modal.view-modal>
                     Create View
                     <b-icon-plus-circle
                         font-scale="0.95"
@@ -46,21 +58,9 @@
                     />
                 </b-dropdown-item>
             </b-dropdown>
-
-            <b-button
-                variant="primary"
-                v-b-toggle.filter-collapse
-                class="ml-2"
-            >
-                Filter
-                <b-icon-funnel
-                    font-scale="0.95"
-                    class="ml-1"
-                />
-            </b-button>
         </div>
 
-        <b-collapse id="filter-collapse">
+        <b-collapse id="docs-filter-collapse">
             <b-card>
                 <b-form-input
                     v-model="filter"
@@ -70,12 +70,9 @@
             </b-card>
         </b-collapse>
 
-        <div
-            class="mb-3"
-            style="height: 550px"
-        >
+        <div class="mb-3 table-wrapper">
             <b-table
-                :items="docs"
+                :items="filteredDocs"
                 :fields="filteredFields"
                 :filter="filter"
                 :per-page="perPage"
@@ -83,13 +80,24 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
+                :empty-text="emptyText"
+                empty-filtered-text="There are no records that match the search"
                 :busy="isBusy"
                 @row-clicked="edit"
                 class="mt-3"
                 outlined
+                show-empty
                 striped
                 fixed
             >
+                <template v-slot:head(actions)>
+                    <b-icon-arrow-clockwise
+                        @click="load"
+                        font-scale="1.25"
+                        class="clickable float-right"
+                    />
+                </template>
+
                 <template v-slot:cell(actions)="row">
                     <span class="float-right">
                         <div
@@ -110,7 +118,7 @@
             align="center"
         />
 
-        <ViewModal/>
+        <ViewModal :fields="fields"/>
     </div>
 </template>
 
@@ -123,14 +131,9 @@ export default {
         ViewModal
     },
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -140,7 +143,6 @@ export default {
             currPage: 1,
             docs: [],
             fields: [],
-            filteredFields: [],
             cols: [],
             isBusy: false
         };
@@ -154,51 +156,56 @@ export default {
             return this.$store.getters['views/views'];
         },
 
-        currView () {
+        curr () {
             return this.$store.getters['views/curr'];
         },
 
+        currView () {
+            return this.views[this.curr];
+        },
+
         viewName () {
-            if (this.views && this.currView >= 0) {
-                let view = this.views[this.currView];
-                return view ? view.name : 'None';
+            return this.currView ? this.currView.name : 'None';
+        },
+
+        filteredDocs () {
+            return this.filteredFields.length > 1 ? this.docs : [];
+        },
+
+        filteredFields () {
+            let filteredFields = [];
+
+            if (this.currView) {
+                const cols = this.currView.cols;
+                filteredFields = this.fields.filter(field => cols.includes(field.key));
+            } else {
+                filteredFields = Array.from(this.fields);
             }
 
-            return 'None';
+            filteredFields.push({
+                key: 'actions',
+                label: '',
+                class: 'actions'
+            });
+
+            return filteredFields;
+        },
+
+        emptyText () {
+            return `${this.filteredFields.length > 1 ?
+                'There are no documents' :
+                'There are no fields that match the view'}`;
         }
     },
     watch: {
-        currView () {
-            this.filterFields();
+        currConn: function () {
+            this.load();
         }
     },
     mounted () {
         this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
     },
     methods: {
-        filterFields () {
-            if (this.currView >= 0 && this.views.length > 0) {
-                let cols = this.views[this.currView].cols;
-                var filteredFields = this.fields.filter(field => cols.includes(field.key));
-            } else {
-                filteredFields = this.fields;
-            }
-
-            if (filteredFields.length > 0) {
-                filteredFields.push({
-                    key: 'actions',
-                    label: '',
-                    class: 'actions'
-                });
-            }
-
-            this.filteredFields = filteredFields;
-        },
-
         removeView (i) {
             this.$store.dispatch('views/remove', i);
         },
@@ -212,8 +219,7 @@ export default {
         },
 
         remove (row) {
-            let currConn = this.conns[this.curr];
-            if (currConn && currConn.url) {
+            if (this.currConn && this.currConn.url) {
                 this.$events.$emit('confirm', {
                     title: 'Delete Document?',
                     body: `Deleting "${row.item._id}" will be permanent and cannot be undone.`,
@@ -221,8 +227,8 @@ export default {
                         text: 'Yes, delete document',
                         variant: 'danger',
                         action: () => {
-                            let url = `${currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
-                            this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
+                            this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                                 this.$events.$emit('alert-open', {
                                     variant: 'danger',
                                     msg: `${err.message} (${(err.response || {}).statusText || ''})`
@@ -243,12 +249,11 @@ export default {
 
         load () {
             this.isBusy = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.db) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
+            if (this.currConn && this.currConn.url && this.$route.params.db) {
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
 
-                this.$http.get(url, currConn.user, currConn.pass).then(({ rows = [] }) => {
+                this.$http.get(url, this.currConn.user, this.currConn.pass).then(({ rows = [] }) => {
                     this.docs = rows.map(row => row.doc) || [];
 
                     if (this.docs.length > 0) {
@@ -262,7 +267,6 @@ export default {
                         });
 
                         this.fields = fields;
-                        this.filterFields();
                     }
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {

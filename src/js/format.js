@@ -1,4 +1,4 @@
-let format = {
+const format = {
     bytes: (bytes, decimals = 1) => {
         if (bytes === 0) return '0 B';
 

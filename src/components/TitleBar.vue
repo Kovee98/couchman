@@ -13,6 +13,13 @@
                 <b-nav-item v-b-toggle.conns-sidebar>
                     Connections
                 </b-nav-item>
+
+                <b-nav-item
+                    href="/#/settings"
+                    right
+                >
+                    Settings
+                </b-nav-item>
             </b-navbar-nav>
         </b-navbar>
     </div>
@@ -21,17 +28,6 @@
 <script>
 export default {
     name: 'TitleBar',
-    props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
-        }
-    },
     data () {
         return {
             logo: {

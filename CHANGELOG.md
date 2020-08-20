@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.1.0] - 2020-08-20
+### Added
+- Settings page
+- Ability to clear all app data
+- Manual refresh buttons on the dbs/docs tables
+- Attachment uploading, deleting, and viewing
+
+### Improved
+- Database/Document filtering input UX consistency
+- View creation to use toggle buttons instead of manually typing out the columns to add to the view
+- View name is required now
+- Simplified retreival of the current connection object
+- Updated codebase to follow stricter variable declaration practices for improved readability and maintainability
+- Look and feel of the document editor
+
+### Fixed
+- Reactivation of current connection
+- Documents not loading after a refresh
+- Errors on connection switching
+- Actions field showing up as an option when creating a view
+- Incorrect displaying of data when there shouldn't be anything being shown
+
 ## [1.0.1] - 2020-08-09
 ### Fixed
 - Docker commands

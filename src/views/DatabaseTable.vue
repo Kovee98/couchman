@@ -1,15 +1,29 @@
 <template>
-    <div>
-        <b-form-input
-            v-model="filter"
-            type="search"
-            placeholder="Filter dbs..."
-            class="my-3"
-        />
-        <div
-            class="mb-3"
-            style="height: 550px"
-        >
+    <div class="mt-4">
+        <div class="pt-3">
+            <b-button
+                variant="primary"
+                v-b-toggle.dbs-filter-collapse
+            >
+                Filter
+                <b-icon-funnel
+                    font-scale="0.95"
+                    class="ml-1"
+                />
+            </b-button>
+        </div>
+
+        <b-collapse id="dbs-filter-collapse">
+            <b-card>
+                <b-form-input
+                    v-model="filter"
+                    type="search"
+                    placeholder="Filter dbs..."
+                />
+            </b-card>
+        </b-collapse>
+
+        <div class="mb-3 table-wrapper">
             <b-table
                 :items="dbs"
                 :fields="fields"
@@ -19,12 +33,24 @@
                 tbody-tr-class="tr"
                 head-variant="dark"
                 table-variant="light"
+                empty-text="There are no databases"
+                empty-filtered-text="There are no records that match the search"
                 :busy="isBusy"
                 @row-clicked="open"
+                class="mt-3"
                 outlined
+                show-empty
                 striped
                 fixed
             >
+                <template v-slot:head(actions)>
+                    <b-icon-arrow-clockwise
+                        @click="load"
+                        font-scale="1.25"
+                        class="clickable float-right"
+                    />
+                </template>
+
                 <template v-slot:cell(actions)="row">
                     <span class="float-right">
                         <div
@@ -54,14 +80,9 @@ import format from '../js/format';
 export default {
     name: 'DatabaseTable',
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -111,20 +132,12 @@ export default {
         }
     },
     watch: {
-        curr: function () {
-            this.load();
-        },
-
-        conns: function () {
+        currConn: function () {
             this.load();
         }
     },
     mounted () {
         this.load();
-
-        this.$events.$on('refresh', (e) => {
-            this.load();
-        });
     },
     methods: {
         open (db) {
@@ -132,7 +145,6 @@ export default {
         },
 
         remove (row) {
-            let currConn = this.conns[this.curr];
             this.$events.$emit('confirm', {
                 title: 'Delete Database?',
                 body: `Deleting "${row.item.name}" will be permanent and cannot be undone.`,
@@ -140,8 +152,8 @@ export default {
                     text: 'Yes, delete database',
                     variant: 'danger',
                     action: () => {
-                        let url = `${currConn.baseUrl}/${row.item.name}`;
-                        this.$http.delete(url, currConn.user, currConn.pass).catch((err) => {
+                        const url = `${this.currConn.baseUrl}/${row.item.name}`;
+                        this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                             this.$events.$emit('alert-open', {
                                 variant: 'danger',
                                 msg: `${err.message} (${(err.response || {}).statusText || ''})`
@@ -161,13 +173,12 @@ export default {
 
         load () {
             this.isBusy = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url) {
-                this.$http.get(`${currConn.baseUrl}/_all_dbs`, currConn.user, currConn.pass).then((dbs) => {
-                    let queued = [];
+            if (this.currConn && this.currConn.url) {
+                this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
+                    const queued = [];
                     dbs.forEach((db) => {
-                        queued.push(this.$http.get(`${currConn.baseUrl}/${db}`, currConn.user, currConn.pass));
+                        queued.push(this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass));
                     });
 
                     Promise.all(queued).then((dbs) => {

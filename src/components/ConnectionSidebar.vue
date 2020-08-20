@@ -6,7 +6,7 @@
             <b-sidebar
                 id="conns-sidebar"
                 title="Connections"
-                width="400px"
+                width="25rem"
                 backdrop
                 shadow
             >
@@ -89,8 +89,9 @@ export default {
         },
 
         activate (i) {
-            this.$store.dispatch('connections/activate', i);
-            this.$events.$emit('refresh');
+            if (i !== this.curr) {
+                this.$store.dispatch('connections/activate', i);
+            }
         },
 
         update (i, conn) {

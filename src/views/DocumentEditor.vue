@@ -1,51 +1,86 @@
 <template>
-    <div class="mt-4">
-        <b-overlay
-            :show="loading"
-            rounded="sm"
-        >
-            <codemirror
-                v-model="doc"
-                :options="opts"
-                ref="editor"
-            />
-        </b-overlay>
-
-        <span class="float-right">
-            <b-button
-                variant="outline-secondary"
-                @click="cancel"
-            >
-                Cancel
-            </b-button>
-            <b-button
+    <div>
+        <div>
+            <b-dropdown
+                id="attachment-dropdown"
                 variant="primary"
-                @click="save"
-                class="ml-2"
             >
-                Save
-            </b-button>
-        </span>
+                <template v-slot:button-content>
+                    Attachments
+                </template>
+
+                <b-dropdown-item
+                    v-for="att in atts"
+                    :key="att.id"
+                    @click="openAttachment(att)"
+                >
+                    {{att}}
+                    <span
+                        @click.stop="removeAttachment(att)"
+                        class="ml-3 remove"
+                    >
+                        <b-icon-trash font-scale="0.99"/>
+                    </span>
+                </b-dropdown-item>
+
+                <b-dropdown-divider v-if="atts.length > 0"/>
+
+                <b-dropdown-item v-b-modal.upload-attachment-modal>
+                    Upload
+                    <b-icon-arrow-bar-up font-scale="1.25"/>
+                </b-dropdown-item>
+            </b-dropdown>
+
+            <UploadAttachmentModal :currConn="currConn"/>
+        </div>
+
+        <div class="mt-3 editor">
+            <b-overlay
+                :show="loading"
+                rounded="sm"
+                class="h-100"
+            >
+                <codemirror
+                    v-model="doc"
+                    :options="opts"
+                    ref="editor"
+                    class="h-100"
+                />
+            </b-overlay>
+
+            <span class="py-3 float-right">
+                <b-button
+                    variant="outline-secondary"
+                    @click="cancel"
+                >
+                    Cancel
+                </b-button>
+                <b-button
+                    variant="success"
+                    @click="save"
+                    class="ml-2"
+                >
+                    Save
+                </b-button>
+            </span>
+        </div>
     </div>
 </template>
 
 <script>
 import { codemirror } from 'vue-codemirror';
+import UploadAttachmentModal from '@/components/UploadAttachmentModal';
 
 export default {
     name: 'DocumentEditor',
     components: {
-        codemirror
+        codemirror,
+        UploadAttachmentModal
     },
     props: {
-        curr: {
-            type: Number,
-            required: true
-        },
-
-        conns: {
-            type: Array,
-            required: true
+        currConn: {
+            type: Object,
+            required: false
         }
     },
     data () {
@@ -53,13 +88,14 @@ export default {
             show: false,
             doc: '',
             opts: {
-                tabSize: 2,
+                tabSize: 4,
+                indentUnit: 4,
                 mode: 'application/json',
                 lineNumbers: true,
                 smartIndent: true,
                 lineWrapping: true,
                 lineWiseCopyCut: false,
-                scrollbarStyle: 'null',
+                scrollbarStyle: 'native',
                 showCursorWhenSelecting: true,
                 autoCloseBrackets: true,
                 matchBrackets: true,
@@ -71,23 +107,25 @@ export default {
     computed: {
         codemirror () {
             return this.$refs.editor.codemirror;
+        },
+
+        atts () {
+            const doc = JSON.parse(this.doc || '{}');
+            return Object.keys(doc._attachments || {});
         }
     },
     watch: {
-        curr () {
-            this.load();
-        },
-
-        conns () {
+        currConn () {
             this.load();
         }
     },
-    mounted () {
-        this.load();
-
-        this.$events.$on('refresh', (e) => {
+    created () {
+        this.$events.$on('refresh', () => {
             this.load();
         });
+    },
+    mounted () {
+        this.load();
     },
     methods: {
         cancel () {
@@ -95,15 +133,13 @@ export default {
         },
 
         save (e) {
-            let doc = this.codemirror.getValue();
-            doc = JSON.parse(doc);
+            const doc = JSON.parse(this.codemirror.getValue());
             this.loading = true;
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.doc) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+            if (this.currConn && this.currConn.url && this.$route.params.doc) {
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
-                this.$http.put(url, currConn.user, currConn.pass, {
+                this.$http.put(url, this.currConn.user, this.currConn.pass, {
                     body: JSON.stringify(doc)
                 }).then((res) => {
                     this.$router.go(-1);
@@ -123,12 +159,11 @@ export default {
         load () {
             this.loading = true;
             this.doc = '';
-            let currConn = this.conns[this.curr];
 
-            if (currConn && currConn.url && this.$route.params.doc) {
-                let url = `${currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+            if (this.currConn && this.currConn.url && this.$route.params.doc) {
+                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
 
-                this.$http.get(url, currConn.user, currConn.pass).then((data) => {
+                this.$http.get(url, this.currConn.user, this.currConn.pass).then((data) => {
                     this.doc = JSON.stringify(data, null, 4);
                     this.show = true;
                 }).catch((err) => {
@@ -142,7 +177,90 @@ export default {
                     this.loading = false;
                 });
             }
+        },
+
+        openAttachment (att) {
+            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}/${att}`;
+            window.open(url);
+        },
+
+        removeAttachment (att) {
+            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${this.$route.params.doc}`;
+
+            this.$http.get(url, this.currConn.user, this.currConn.pass).then((doc) => {
+                this.$http.delete(`${url}/${att}?rev=${doc._rev}`, this.currConn.user, this.currConn.pass)
+                    .then((res) => {
+                        this.$events.$emit('alert-open', {
+                            variant: 'success',
+                            msg: 'Attachment deleted'
+                        });
+                        this.$events.$emit('refresh');
+                    })
+                    .catch((err) => {
+                        this.$events.$emit('alert-open', {
+                            variant: 'danger',
+                            msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                        });
+
+                        this.$log.error(err);
+                    });
+            });
         }
     }
 };
 </script>
+
+<style lang="scss">
+    $height: 40rem;
+    $background: rgb(32, 32, 32);
+    $text: #eeeeee;
+    $color: transparentize($text, 0.25);
+    $lineNumbers: transparentize($text, 0.75);
+
+    .editor {
+        height: $height;
+        font-size: 0.9rem;
+        background: $background;
+        cursor: text;
+    }
+    .CodeMirror {
+        height: $height !important;
+        color: $color !important;
+        background: transparent !important;
+    }
+    div.CodeMirror-selected {
+        background: lighten($background, 5%) !important;
+    }
+    .CodeMirror-guttermarker, .CodeMirror-guttermarker-subtle {
+        color: transparent !important;
+    }
+    .CodeMirror-gutters {
+        background: transparent !important;
+        border-right: none !important;
+    }
+    .CodeMirror-cursor {
+        border-left: 1px solid $color !important;
+    }
+    .CodeMirror-linenumber {
+        color: $lineNumbers !important;
+    }
+    .CodeMirror-matchingbracket, .CodeMirror-nonmatchingbracket {
+        color: lighten($color, 50%) !important;
+        background: lighten($background, 10%) !important;
+        outline: 1px solid $color;
+    }
+    .CodeMirror-activeline-background {
+        background: lighten($background, 2%) !important;
+    }
+
+    // syntax colors
+    $key: #80ff00;
+    $string: #e7db74;
+    $number: #ac80ff;
+    $atom: #ac80ff;
+
+    span.cm-string { color: $string !important }
+    span.cm-keyword, span.cm-variable, span.cm-property { color: $key !important }
+    span.cm-number { color: $number !important }
+    span.cm-atom { color: $atom !important }
+</style>

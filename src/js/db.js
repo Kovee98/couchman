@@ -8,7 +8,7 @@ function createDB (opts) {
             return db.getItem(key);
         } else {
             return db.keys().then(async (keys) => {
-                let map = {};
+                const map = {};
                 for (let i = 0; i < keys.length; i++) {
                     const key = keys[i];
                     map[key] = await db.get(key);
@@ -41,7 +41,7 @@ function createDB (opts) {
     return db;
 }
 
-let dbs = {
+const dbs = {
     connections: createDB({
         name: 'couchman',
         storeName: 'connections',

@@ -1,4 +1,4 @@
-let session = {
+const session = {
     get: (key) => {
         return sessionStorage.getItem(key);
     },
