@@ -12,7 +12,7 @@
     "image:run": "docker run -d -p 8080:80 --name couchman-test kovee98/couchman:test",
     "gulp:sass": "npx gulp sass",
     "bump-version": "npm version --no-git-tag-version $VERSION",
-    "compress": "zip -jr release-$VERSION.zip dist && tar -zcf release-$VERSION.tar.gz dist"
+    "compress": "zip -jr couchman-$VERSION.zip dist && tar -zcf couchman-$VERSION.tar.gz dist"
   },
   "husky": {
     "hooks": {
