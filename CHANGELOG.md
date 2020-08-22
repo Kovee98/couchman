@@ -1,3 +1,10 @@
+# 1.0.0 (2020-08-22)
+
+
+### Features
+
+* added automatic releases ([a6e43c5](https://github.com/Kovee98/couchman/commit/a6e43c5e27c20d66880c3ee767b66cc339f44275))
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
