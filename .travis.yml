@@ -1,29 +1,27 @@
+dist: trusty
+sudo: required
 language: node_js
 
 node_js:
   - 12
 
-cache:
-  npm: true
-  directories:
-    - ./node_modules
+os:
+  - linux
 
-before_script:
-  - npm install
+stages:
+  - name: install
+  - name: release
+    if: ((branch = master AND type = push) OR (tag IS present)) AND NOT fork
 
-script:
-  - npm run build
-
-before_deploy:
-  - zip -jr couchman-${TRAVIS_TAG}.zip dist
-  - tar -zcf couchman-${TRAVIS_TAG}.tar.gz dist
-
-deploy:
-  - provider: releases
-    api_key: $GITHUB_TOKEN
-    files:
-      - "couchman-${TRAVIS_TAG}.zip"
-      - "couchman-${TRAVIS_TAG}.tar.gz"
-    skip_cleanup: true
-    on:
-      tags: true
+jobs:
+  include:
+    - stage: install
+      name: install node dependencies
+      script:
+      - npm install
+      skip_cleanup: true
+    - stage: release
+      name: semantic-release
+      script:
+      - npm run build
+      - npx semantic-release
