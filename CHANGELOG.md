@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Kovee98/couchman/compare/v1.0.0...v1.0.1) (2020-08-22)
+
+
+### Bug Fixes
+
+* compress npm script ([ded176b](https://github.com/Kovee98/couchman/commit/ded176bf20a2b86593c42f0d726507e192a91231))
+
 # 1.0.0 (2020-08-22)
 
 
