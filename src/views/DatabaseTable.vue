@@ -19,6 +19,7 @@
                     v-model="filter"
                     type="search"
                     placeholder="Filter dbs..."
+                    debounce="300"
                 />
             </b-card>
         </b-collapse>
@@ -27,6 +28,7 @@
             <b-table
                 :items="dbs"
                 :fields="fields"
+                :filter-included-fields="includedFields"
                 :filter="filter"
                 :per-page="perPage"
                 :current-page="currPage"
@@ -129,6 +131,10 @@ export default {
     computed: {
         totalRows () {
             return this.dbs.length;
+        },
+
+        includedFields () {
+            return this.fields.map(field => field.key);
         }
     },
     watch: {
