@@ -176,28 +176,24 @@ export default {
 
             if (this.currConn && this.currConn.url) {
                 this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
-                    const queued = [];
-                    dbs.forEach((db) => {
-                        queued.push(this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass));
-                    });
-
-                    Promise.all(queued).then((dbs) => {
-                        this.dbs = dbs.map((db) => {
-                            return {
+                    for (let i = 0; i < dbs.length; i++) {
+                        const db = dbs[i];
+                        this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass).then((db) => {
+                            this.dbs.push({
                                 name: db.db_name,
                                 // TODO: which size to use for couchdb servers?
                                 size: db.disk_size || db.sizes.file,
                                 doc_count: db.doc_count
-                            };
-                        });
-                    }).catch((err) => {
-                        this.$events.$emit('alert-open', {
-                            variant: 'danger',
-                            msg: `${err.message} (${(err.response || {}).statusText || ''})`
-                        });
+                            });
+                        }).catch((err) => {
+                            this.$events.$emit('alert-open', {
+                                variant: 'danger',
+                                msg: `${err.message} (${(err.response || {}).statusText || ''})`
+                            });
 
-                        this.$log.error(err);
-                    });
+                            this.$log.error(err);
+                        });
+                    }
                 }).catch((err) => {
                     this.$events.$emit('alert-open', {
                         variant: 'danger',
