@@ -179,12 +179,13 @@ export default {
 
         load () {
             this.isBusy = true;
+            this.dbs = [];
 
             if (this.currConn && this.currConn.url) {
-                this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
+                this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then(async (dbs) => {
                     for (let i = 0; i < dbs.length; i++) {
                         const db = dbs[i];
-                        this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass).then((db) => {
+                        await this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass).then((db) => {
                             this.dbs.push({
                                 name: db.db_name,
                                 // TODO: which size to use for couchdb servers?
@@ -198,6 +199,8 @@ export default {
                             });
 
                             this.$log.error(err);
+                        }).finally(() => {
+                            this.isBusy = false;
                         });
                     }
                 }).catch((err) => {
