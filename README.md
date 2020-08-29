@@ -1,6 +1,6 @@
 <p align="center"><img src="https://github.com/Kovee98/couchman/blob/develop/src/assets/logo-500x500.png" width="200" /></p>
 
-# Couchman [![Build Status](https://travis-ci.com/Kovee98/couchman.svg?branch=develop)](https://travis-ci.com/Kovee98/couchman)
+# Couchman [![Build Status](https://travis-ci.com/Kovee98/couchman.svg?branch=develop)](https://travis-ci.com/Kovee98/couchman) <img src="https://badgen.net/docker/pulls/kovee98/couchman"/> <img src="https://badgen.net/docker/size/kovee98/couchman/latest"/>
 > A multi-instance CouchDB manager with filtering, sorting, and a simple view system. Meant to be simple, intuitive, and persistent.
 
 ## Goals
