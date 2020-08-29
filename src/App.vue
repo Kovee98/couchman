@@ -46,7 +46,7 @@ export default {
         },
 
         currConn () {
-            return this.conns[this.curr];
+            return this.$store.getters['connections/currConn'];
         }
     },
     created () {
