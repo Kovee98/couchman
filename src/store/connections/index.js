@@ -7,11 +7,13 @@ export default {
     namespaced: true,
     state: {
         curr: 0,
-        conns: []
+        conns: [],
+        currConn: {}
     },
     getters: {
         conns: (state) => state.conns,
-        curr: (state) => state.curr
+        curr: (state) => state.curr,
+        currConn: (state) => state.currConn
     },
     mutations: {
         add (state, conn) {
@@ -22,12 +24,14 @@ export default {
 
             // adjust curr pointer
             if (state.curr > 0 && i <= state.curr) state.curr--;
+            state.currConn = state.conns[state.curr];
         },
         update (state, { i, conn }) {
             state.conns.splice(i, 1, conn);
         },
         activate (state, i) {
             state.curr = i;
+            state.currConn = state.conns[state.curr];
         }
     },
     actions: {
@@ -61,6 +65,7 @@ export default {
                 if (data) {
                     context.state.conns = data.conns;
                     context.state.curr = data.curr;
+                    context.state.currConn = data.currConn;
                 }
             });
         }

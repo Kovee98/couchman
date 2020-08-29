@@ -46,12 +46,13 @@ export default {
         },
 
         currConn () {
-            return this.conns[this.curr];
+            return this.$store.getters['connections/currConn'];
         }
     },
     created () {
         this.$store.dispatch('connections/init');
         this.$store.dispatch('views/init');
+        this.$store.dispatch('cache/init');
     }
 };
 </script>

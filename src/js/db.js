@@ -51,6 +51,11 @@ const dbs = {
         name: 'couchman',
         storeName: 'views',
         description: 'List of user-added views'
+    }),
+    cache: createDB({
+        name: 'couchman',
+        storeName: 'cache',
+        description: 'Cache for databases and documents'
     })
 };
 

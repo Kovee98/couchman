@@ -19,6 +19,7 @@
                     v-model="filter"
                     type="search"
                     placeholder="Filter dbs..."
+                    debounce="300"
                 />
             </b-card>
         </b-collapse>
@@ -27,6 +28,7 @@
             <b-table
                 :items="dbs"
                 :fields="fields"
+                :filter-included-fields="includedFields"
                 :filter="filter"
                 :per-page="perPage"
                 :current-page="currPage"
@@ -75,7 +77,7 @@
 </template>
 
 <script>
-import format from '../js/format';
+import format from '../js/format.js';
 
 export default {
     name: 'DatabaseTable',
@@ -88,7 +90,6 @@ export default {
     data () {
         return {
             filter: '',
-            dbs: [],
             perPage: 10,
             currPage: 1,
             fields: [
@@ -129,15 +130,36 @@ export default {
     computed: {
         totalRows () {
             return this.dbs.length;
+        },
+
+        includedFields () {
+            return this.fields.map(field => field.key);
+        },
+
+        caches () {
+            return this.$store.getters['cache/caches'];
+        },
+
+        dbs () {
+            const isCacheReady = this.$store.getters['cache/isReady'];
+            if (!this.currConn.id || !isCacheReady) return [];
+
+            const cache = this.caches[this.currConn.id];
+
+            if (!cache) {
+                this.$store.dispatch('cache/load', this.currConn);
+                return [];
+            } else {
+                const dbs = Object.values(cache).map((db) => {
+                    return {
+                        name: db.db_name,
+                        size: (db.disk_size || (db.sizes || {}).active) || 0,
+                        doc_count: db.doc_count
+                    };
+                });
+                return dbs;
+            }
         }
-    },
-    watch: {
-        currConn: function () {
-            this.load();
-        }
-    },
-    mounted () {
-        this.load();
     },
     methods: {
         open (db) {
@@ -171,44 +193,9 @@ export default {
             });
         },
 
+        // triggers a re-caching of all dbs/docs
         load () {
-            this.isBusy = true;
-
-            if (this.currConn && this.currConn.url) {
-                this.$http.get(`${this.currConn.baseUrl}/_all_dbs`, this.currConn.user, this.currConn.pass).then((dbs) => {
-                    const queued = [];
-                    dbs.forEach((db) => {
-                        queued.push(this.$http.get(`${this.currConn.baseUrl}/${db}`, this.currConn.user, this.currConn.pass));
-                    });
-
-                    Promise.all(queued).then((dbs) => {
-                        this.dbs = dbs.map((db) => {
-                            return {
-                                name: db.db_name,
-                                // TODO: which size to use for couchdb servers?
-                                size: db.disk_size || db.sizes.file,
-                                doc_count: db.doc_count
-                            };
-                        });
-                    }).catch((err) => {
-                        this.$events.$emit('alert-open', {
-                            variant: 'danger',
-                            msg: `${err.message} (${(err.response || {}).statusText || ''})`
-                        });
-
-                        this.$log.error(err);
-                    });
-                }).catch((err) => {
-                    this.$events.$emit('alert-open', {
-                        variant: 'danger',
-                        msg: `${err.message} (${(err.response || {}).statusText || ''})`
-                    });
-
-                    this.$log.error(err);
-                }).finally(() => {
-                    this.isBusy = false;
-                });
-            }
+            this.$store.dispatch('cache/load', this.currConn);
         }
     }
 };
