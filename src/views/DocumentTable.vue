@@ -82,7 +82,6 @@
                 table-variant="light"
                 :empty-text="emptyText"
                 empty-filtered-text="There are no records that match the search"
-                :busy="isBusy"
                 @row-clicked="edit"
                 class="mt-3"
                 outlined
@@ -140,11 +139,7 @@ export default {
         return {
             filter: '',
             perPage: 10,
-            currPage: 1,
-            docs: [],
-            fields: [],
-            cols: [],
-            isBusy: false
+            currPage: 1
         };
     },
     computed: {
