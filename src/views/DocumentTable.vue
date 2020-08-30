@@ -82,7 +82,6 @@
                 table-variant="light"
                 :empty-text="emptyText"
                 empty-filtered-text="There are no records that match the search"
-                :busy="isBusy"
                 @row-clicked="edit"
                 class="mt-3"
                 outlined
@@ -140,11 +139,7 @@ export default {
         return {
             filter: '',
             perPage: 10,
-            currPage: 1,
-            docs: [],
-            fields: [],
-            cols: [],
-            isBusy: false
+            currPage: 1
         };
     },
     computed: {
@@ -195,15 +190,41 @@ export default {
             return `${this.filteredFields.length > 1 ?
                 'There are no documents' :
                 'There are no fields that match the view'}`;
+        },
+
+        caches () {
+            return this.$store.getters['cache/caches'];
+        },
+
+        docs () {
+            const isCacheReady = this.$store.getters['cache/isReady'];
+            if (!this.currConn.id || !isCacheReady) return [];
+
+            const db = this.$route.params.db;
+            const cache = this.caches[this.currConn.id][db];
+
+            if (!cache) {
+                this.$store.dispatch('cache/load', this.currConn);
+                return [];
+            } else {
+                return cache.docs.rows.map(record => record.doc);
+            }
+        },
+
+        fields () {
+            if (!this.docs || this.docs.length <= 0) return [];
+
+            let fields = Object.keys(this.docs[0]);
+            fields = fields.map((field) => {
+                return {
+                    key: field,
+                    sortable: true,
+                    class: 'truncate td'
+                };
+            });
+
+            return fields;
         }
-    },
-    watch: {
-        currConn: function () {
-            this.load();
-        }
-    },
-    mounted () {
-        this.load();
     },
     methods: {
         removeView (i) {
@@ -247,38 +268,9 @@ export default {
             }
         },
 
+        // triggers a re-caching of all dbs/docs
         load () {
-            this.isBusy = true;
-
-            if (this.currConn && this.currConn.url && this.$route.params.db) {
-                const url = `${this.currConn.baseUrl}/${this.$route.params.db}/_all_docs?include_docs=true`;
-
-                this.$http.get(url, this.currConn.user, this.currConn.pass).then(({ rows = [] }) => {
-                    this.docs = rows.map(row => row.doc) || [];
-
-                    if (this.docs.length > 0) {
-                        let fields = Object.keys(this.docs[0]);
-                        fields = fields.map((field) => {
-                            return {
-                                key: field,
-                                sortable: true,
-                                class: 'truncate td'
-                            };
-                        });
-
-                        this.fields = fields;
-                    }
-                }).catch((err) => {
-                    this.$events.$emit('alert-open', {
-                        variant: 'danger',
-                        msg: `${err.message} (${(err.response || {}).statusText || ''})`
-                    });
-
-                    this.$log.error(err);
-                }).finally(() => {
-                    this.isBusy = false;
-                });
-            }
+            this.$store.dispatch('cache/load', this.currConn);
         }
     }
 };
