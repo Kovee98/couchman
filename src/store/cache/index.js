@@ -2,8 +2,7 @@ import db from '../../js/db';
 import DbWorker from '../../js/workers/db.worker.js';
 import DocWorker from '../../js/workers/doc.worker.js';
 
-const dbWorker = new DbWorker();
-const docWorker = new DocWorker();
+const workers = {};
 const save = db.cache.save;
 
 export default {
@@ -41,11 +40,16 @@ export default {
         }
     },
     actions: {
+        buildConns (context, data) {
+            Object.values(workers).forEach((worker) => {
+                worker.dbWorker.postMessage({ conn: worker.conn });
+            });
+        },
         buildDbs (context, data) {
-            dbWorker.postMessage(data);
+            workers[data.conn.id].dbWorker.postMessage(data);
         },
         buildDocs (context, data) {
-            docWorker.postMessage(data);
+            workers[data.conn.id].docWorker.postMessage(data);
         },
         setDbs (context, data) {
             context.commit('setDbs', data);
@@ -59,22 +63,39 @@ export default {
             context.commit('removeDb', data);
             save(context.state);
         },
-        init (context) {
+        init (context, { conns }) {
             // load connections from db into memory
             db.cache.load().then((data) => {
                 if (data) {
-                    context.state.caches = data.caches || {};
+                    context.state.caches = data.caches;
                     context.state.isReady = true;
                 }
+
+                // create associative array of workers for each connection
+                for (let i = 0; i < conns.length; i++) {
+                    const conn = conns[i];
+
+                    // ensure a cache exists for this connection
+                    if (!context.state.caches[conn.id]) {
+                        context.state.caches[conn.id] = {};
+                    }
+
+                    const dbWorker = new DbWorker();
+                    const docWorker = new DocWorker();
+
+                    dbWorker.onmessage = function (e) {
+                        context.dispatch(e.data.type, e.data);
+                    };
+
+                    docWorker.onmessage = function (e) {
+                        context.dispatch(e.data.type, e.data);
+                    };
+
+                    workers[conn.id] = { conn, dbWorker, docWorker };
+                }
+
+                context.dispatch('buildConns');
             });
-
-            dbWorker.onmessage = function (e) {
-                context.dispatch(e.data.type, e.data);
-            };
-
-            docWorker.onmessage = function (e) {
-                context.dispatch(e.data.type, e.data);
-            };
         }
     }
 };
