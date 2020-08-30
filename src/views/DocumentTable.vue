@@ -204,7 +204,7 @@ export default {
             const cache = this.caches[this.currConn.id][db];
 
             if (!cache) {
-                this.$store.dispatch('cache/load', this.currConn);
+                this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
                 return [];
             } else {
                 return cache.docs.rows.map(record => record.doc);
@@ -248,7 +248,11 @@ export default {
                         text: 'Yes, delete document',
                         variant: 'danger',
                         action: () => {
-                            const url = `${this.currConn.baseUrl}/${this.$route.params.db}/${row.item._id}`;
+                            const baseUrl = this.currConn.baseUrl;
+                            const db = this.$route.params.db;
+                            const id = row.item._id;
+                            const url = `${baseUrl}/${db}/${id}`;
+
                             this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                                 this.$events.$emit('alert-open', {
                                     variant: 'danger',
@@ -256,7 +260,10 @@ export default {
                                 });
                                 this.$log.error('err:', err);
                             }).finally(() => {
-                                this.load();
+                                this.$store.dispatch('cache/buildDbs', {
+                                    currConn: this.currConn,
+                                    dbs: [db]
+                                });
                             });
                         }
                     },
@@ -270,7 +277,7 @@ export default {
 
         // triggers a re-caching of all dbs/docs
         load () {
-            this.$store.dispatch('cache/load', this.currConn);
+            this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
         }
     }
 };

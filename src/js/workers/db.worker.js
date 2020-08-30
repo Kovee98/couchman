@@ -1,16 +1,12 @@
 onmessage = function (e) {
-    const currConn = e.data;
-    const req = new XMLHttpRequest();
+    const currConn = e.data.currConn;
+    const allDbs = e.data.dbs;
+    const dbs = [];
+    const reqs = [];
 
-    req.open('GET', `${currConn.baseUrl}/_all_dbs`, false);
-
-    req.onload = function () {
-        const allDbs = JSON.parse(req.response);
-        const dbs = [];
-        const xhr = [];
-
+    if (allDbs) {
         postMessage({
-            type: 'loadDocs',
+            type: 'buildDocs',
             currConn: currConn,
             payload: allDbs
         });
@@ -18,23 +14,51 @@ onmessage = function (e) {
         for (let i = 0; i < allDbs.length; i++) {
             const db = allDbs[i];
 
-            xhr[i] = new XMLHttpRequest();
+            reqs[i] = new XMLHttpRequest();
 
-            xhr[i].open('GET', `${currConn.baseUrl}/${db}`, false);
+            reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
 
-            xhr[i].onload = function () {
-                dbs.push(JSON.parse(xhr[i].response));
+            reqs[i].onload = function () {
+                dbs.push(JSON.parse(reqs[i].response));
             };
 
-            xhr[i].send();
+            reqs[i].send();
         }
+    } else {
+        const req = new XMLHttpRequest();
 
-        postMessage({
-            type: 'setDbs',
-            currConn: currConn,
-            payload: dbs
-        });
-    };
+        req.open('GET', `${currConn.baseUrl}/_all_dbs`, false);
 
-    req.send();
+        req.onload = function () {
+            const allDbs = JSON.parse(req.response);
+
+            postMessage({
+                type: 'buildDocs',
+                currConn: currConn,
+                payload: allDbs
+            });
+
+            for (let i = 0; i < allDbs.length; i++) {
+                const db = allDbs[i];
+
+                reqs[i] = new XMLHttpRequest();
+
+                reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
+
+                reqs[i].onload = function () {
+                    dbs.push(JSON.parse(reqs[i].response));
+                };
+
+                reqs[i].send();
+            }
+        };
+
+        req.send();
+    }
+
+    postMessage({
+        type: 'setDbs',
+        currConn: currConn,
+        payload: dbs
+    });
 };

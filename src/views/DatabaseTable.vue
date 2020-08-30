@@ -145,7 +145,7 @@ export default {
             const cache = this.caches[this.currConn.id];
 
             if (!cache) {
-                this.$store.dispatch('cache/load', this.currConn);
+                this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
                 return [];
             } else {
                 const dbs = Object.values(cache).map((db) => {
@@ -172,7 +172,10 @@ export default {
                     text: 'Yes, delete database',
                     variant: 'danger',
                     action: () => {
-                        const url = `${this.currConn.baseUrl}/${row.item.name}`;
+                        const baseUrl = this.currConn.baseUrl;
+                        const db = row.item.name;
+                        const url = `${baseUrl}/${db}`;
+
                         this.$http.delete(url, this.currConn.user, this.currConn.pass).catch((err) => {
                             this.$events.$emit('alert-open', {
                                 variant: 'danger',
@@ -180,7 +183,10 @@ export default {
                             });
                             this.$log.error(err);
                         }).finally(() => {
-                            this.load();
+                            this.$store.dispatch('cache/removeDb', {
+                                currConn: this.currConn,
+                                db: db
+                            });
                         });
                     }
                 },
@@ -193,7 +199,7 @@ export default {
 
         // triggers a re-caching of all dbs/docs
         load () {
-            this.$store.dispatch('cache/load', this.currConn);
+            this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
         }
     }
 };
