@@ -18,6 +18,10 @@ onmessage = function (e) {
 
             reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
 
+            if (conn.user && conn.pass) {
+                reqs[i].setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+            }
+
             reqs[i].onload = function () {
                 dbs.push(JSON.parse(reqs[i].response));
             };
@@ -28,6 +32,10 @@ onmessage = function (e) {
         const req = new XMLHttpRequest();
 
         req.open('GET', `${conn.baseUrl}/_all_dbs`, false);
+
+        if (conn.user && conn.pass) {
+            req.setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
 
         req.onload = function () {
             const allDbs = JSON.parse(req.response);
@@ -44,6 +52,10 @@ onmessage = function (e) {
                 reqs[i] = new XMLHttpRequest();
 
                 reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
+
+                if (conn.user && conn.pass) {
+                    reqs[i].setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+                }
 
                 reqs[i].onload = function () {
                     dbs.push(JSON.parse(reqs[i].response));

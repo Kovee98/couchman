@@ -2,22 +2,26 @@ onmessage = function (e) {
     const conn = e.data.conn;
     const allDbs = e.data.payload;
     const docs = [];
-    const xhr = [];
+    const reqs = [];
 
     for (let i = 0; i < allDbs.length; i++) {
         const db = allDbs[i];
 
-        xhr[i] = new XMLHttpRequest();
+        reqs[i] = new XMLHttpRequest();
 
-        xhr[i].open('GET', `${conn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
+        reqs[i].open('GET', `${conn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
 
-        xhr[i].onload = function () {
-            const res = JSON.parse(xhr[i].response);
+        if (conn.user && conn.pass) {
+            reqs[i].setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
+
+        reqs[i].onload = function () {
+            const res = JSON.parse(reqs[i].response);
             res.db = db;
             docs.push(res);
         };
 
-        xhr[i].send();
+        reqs[i].send();
     }
 
     postMessage({
