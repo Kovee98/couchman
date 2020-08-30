@@ -1,5 +1,5 @@
 onmessage = function (e) {
-    const currConn = e.data.currConn;
+    const conn = e.data.conn;
     const allDbs = e.data.dbs;
     const dbs = [];
     const reqs = [];
@@ -7,7 +7,7 @@ onmessage = function (e) {
     if (allDbs) {
         postMessage({
             type: 'buildDocs',
-            currConn: currConn,
+            conn: conn,
             payload: allDbs
         });
 
@@ -16,7 +16,7 @@ onmessage = function (e) {
 
             reqs[i] = new XMLHttpRequest();
 
-            reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
+            reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
 
             reqs[i].onload = function () {
                 dbs.push(JSON.parse(reqs[i].response));
@@ -27,14 +27,14 @@ onmessage = function (e) {
     } else {
         const req = new XMLHttpRequest();
 
-        req.open('GET', `${currConn.baseUrl}/_all_dbs`, false);
+        req.open('GET', `${conn.baseUrl}/_all_dbs`, false);
 
         req.onload = function () {
             const allDbs = JSON.parse(req.response);
 
             postMessage({
                 type: 'buildDocs',
-                currConn: currConn,
+                conn: conn,
                 payload: allDbs
             });
 
@@ -43,7 +43,7 @@ onmessage = function (e) {
 
                 reqs[i] = new XMLHttpRequest();
 
-                reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
+                reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
 
                 reqs[i].onload = function () {
                     dbs.push(JSON.parse(reqs[i].response));
@@ -58,7 +58,7 @@ onmessage = function (e) {
 
     postMessage({
         type: 'setDbs',
-        currConn: currConn,
+        conn: conn,
         payload: dbs
     });
 };

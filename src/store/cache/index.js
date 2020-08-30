@@ -20,8 +20,8 @@ export default {
         setDbs (state, data) {
             for (let i = 0; i < data.payload.length; i++) {
                 const db = data.payload[i];
-                state.caches[data.currConn.id][db.db_name] = {
-                    ...state.caches[data.currConn.id][db.db_name],
+                state.caches[data.conn.id][db.db_name] = {
+                    ...state.caches[data.conn.id][db.db_name],
                     ...db
                 };
             }
@@ -29,15 +29,15 @@ export default {
         setDocs (state, data) {
             for (let i = 0; i < data.payload.length; i++) {
                 const docs = data.payload[i];
-                state.caches[data.currConn.id][docs.db] = {
-                    ...state.caches[data.currConn.id][docs.db],
+                state.caches[data.conn.id][docs.db] = {
+                    ...state.caches[data.conn.id][docs.db],
                     docs: docs
                 };
             }
         },
         removeDb (state, data) {
-            delete state.caches[data.currConn.id][data.db];
-            state.caches[data.currConn.id] = Object.assign({}, state.caches[data.currConn.id]);
+            delete state.caches[data.conn.id][data.db];
+            state.caches[data.conn.id] = Object.assign({}, state.caches[data.conn.id]);
         }
     },
     actions: {

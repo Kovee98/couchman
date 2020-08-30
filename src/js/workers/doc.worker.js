@@ -1,5 +1,5 @@
 onmessage = function (e) {
-    const currConn = e.data.currConn;
+    const conn = e.data.conn;
     const allDbs = e.data.payload;
     const docs = [];
     const xhr = [];
@@ -9,7 +9,7 @@ onmessage = function (e) {
 
         xhr[i] = new XMLHttpRequest();
 
-        xhr[i].open('GET', `${currConn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
+        xhr[i].open('GET', `${conn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
 
         xhr[i].onload = function () {
             const res = JSON.parse(xhr[i].response);
@@ -22,7 +22,7 @@ onmessage = function (e) {
 
     postMessage({
         type: 'setDocs',
-        currConn: currConn,
+        conn: conn,
         payload: docs
     });
 };

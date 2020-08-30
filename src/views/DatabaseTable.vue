@@ -145,7 +145,7 @@ export default {
             const cache = this.caches[this.currConn.id];
 
             if (!cache) {
-                this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+                this.$store.dispatch('cache/buildDbs', { conn: this.currConn });
                 return [];
             } else {
                 const dbs = Object.values(cache).map((db) => {
@@ -184,7 +184,7 @@ export default {
                             this.$log.error(err);
                         }).finally(() => {
                             this.$store.dispatch('cache/removeDb', {
-                                currConn: this.currConn,
+                                conn: this.currConn,
                                 db: db
                             });
                         });
@@ -199,7 +199,7 @@ export default {
 
         // triggers a re-caching of all dbs/docs
         load () {
-            this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+            this.$store.dispatch('cache/buildDbs', { conn: this.currConn });
         }
     }
 };
