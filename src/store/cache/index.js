@@ -34,18 +34,17 @@ export default {
                     docs: docs
                 };
             }
+        },
+        removeDb (state, data) {
+            delete state.caches[data.currConn.id][data.db];
+            state.caches[data.currConn.id] = Object.assign({}, state.caches[data.currConn.id]);
         }
     },
     actions: {
-        load (context, currConn) {
-            if (currConn.baseUrl) {
-                if (!context.state.caches[currConn.id]) {
-                    context.state.caches[currConn.id] = {};
-                }
-                dbWorker.postMessage(currConn);
-            }
+        buildDbs (context, data) {
+            dbWorker.postMessage(data);
         },
-        loadDocs (context, data) {
+        buildDocs (context, data) {
             docWorker.postMessage(data);
         },
         setDbs (context, data) {
@@ -54,6 +53,10 @@ export default {
         },
         setDocs (context, data) {
             context.commit('setDocs', data);
+            save(context.state);
+        },
+        removeDb (context, data) {
+            context.commit('removeDb', data);
             save(context.state);
         },
         init (context) {
