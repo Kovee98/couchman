@@ -50,6 +50,11 @@ export default {
         save (context) {
             save(context.state);
         },
+        clear (context) {
+            context.state.curr = -1;
+            context.state.views = [];
+            db.views.clear();
+        },
         init (context) {
             // load views from db into memory
             db.views.load().then((data) => {

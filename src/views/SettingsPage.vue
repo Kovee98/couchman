@@ -35,8 +35,6 @@
 </template>
 
 <script>
-import db from '@/js/db.js';
-
 export default {
     name: 'SettingsPage',
     methods: {
@@ -48,19 +46,13 @@ export default {
                     text: 'Yes, clear data',
                     variant: 'danger',
                     action: () => {
-                        Promise.allSettled([
-                            db.connections.clear(),
-                            db.views.clear()
-                        ]).then(() => {
-                            this.$events.$emit('alert-open', {
-                                variant: 'success',
-                                msg: 'Data cleared'
-                            });
-                        }).catch((err) => {
-                            this.$events.$emit('alert-open', {
-                                variant: 'danger',
-                                msg: `Data not cleared. ${err}`
-                            });
+                        this.$store.dispatch('connections/clear');
+                        this.$store.dispatch('views/clear');
+                        this.$store.dispatch('cache/clear');
+
+                        this.$events.$emit('alert-open', {
+                            variant: 'success',
+                            msg: 'Data cleared'
                         });
                     }
                 },

@@ -71,6 +71,11 @@ export default {
             context.commit('removeDb', data);
             save(context.state);
         },
+        clear (context) {
+            context.state.isReady = false;
+            context.state.caches = {};
+            db.cache.clear();
+        },
         init (context, { conns }) {
             // load connections from db into memory
             db.cache.load().then((data) => {
