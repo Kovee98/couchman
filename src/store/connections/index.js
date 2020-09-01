@@ -6,6 +6,7 @@ const save = db.connections.save;
 export default {
     namespaced: true,
     state: {
+        id: 0,
         curr: 0,
         conns: [],
         currConn: {}
@@ -17,7 +18,9 @@ export default {
     },
     mutations: {
         add (state, conn) {
+            conn.id = state.id;
             state.conns.push(conn);
+            state.id++;
         },
         remove (state, i) {
             state.conns.splice(i, 1);
