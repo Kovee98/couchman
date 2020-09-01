@@ -21,6 +21,7 @@ export default {
             conn.id = state.id;
             state.conns.push(conn);
             state.id++;
+            state.currConn = state.conns[state.curr];
         },
         remove (state, i) {
             state.conns.splice(i, 1);
@@ -31,6 +32,7 @@ export default {
         },
         update (state, { i, conn }) {
             state.conns.splice(i, 1, conn);
+            state.currConn = state.conns[state.curr];
         },
         activate (state, i) {
             state.curr = i;
