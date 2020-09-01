@@ -115,7 +115,6 @@ export default {
             db.cache.load().then((data) => {
                 if (data) {
                     context.state.caches = data.caches;
-                    context.state.isReady = true;
                 }
 
                 // create associative array of workers for each connection
@@ -140,6 +139,8 @@ export default {
 
                     workers[conn.id] = { conn, dbWorker, docWorker };
                 }
+
+                context.state.isReady = true;
 
                 context.dispatch('buildConns');
             });
