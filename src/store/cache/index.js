@@ -37,6 +37,10 @@ export default {
         removeDb (state, data) {
             delete state.caches[data.conn.id][data.db];
             state.caches[data.conn.id] = Object.assign({}, state.caches[data.conn.id]);
+        },
+        removeConn (state, data) {
+            delete state.caches[data.conn.id];
+            state.caches = Object.assign({}, state.caches);
         }
     },
     actions: {
@@ -44,6 +48,10 @@ export default {
             Object.values(workers).forEach((worker) => {
                 worker.dbWorker.postMessage({ conn: worker.conn });
             });
+        },
+        removeConn (context, data) {
+            context.commit('removeConn', data);
+            save(context.state);
         },
         buildDbs (context, data) {
             workers[data.conn.id].dbWorker.postMessage(data);
