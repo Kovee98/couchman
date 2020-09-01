@@ -134,18 +134,17 @@ export default {
             return this.fields.map(field => field.key);
         },
 
-        caches () {
-            return this.$store.getters['cache/caches'];
-        },
-
         dbs () {
+            const caches = this.$store.getters['cache/caches'];
             const isCacheReady = this.$store.getters['cache/isReady'];
-            if (!this.currConn.id || !isCacheReady) return [];
+            const currConn = this.currConn;
 
-            const cache = this.caches[this.currConn.id];
+            if (!isCacheReady || !currConn || (!currConn.id && currConn.id !== 0)) return [];
+
+            const cache = caches[currConn.id];
 
             if (!cache) {
-                this.$store.dispatch('cache/buildDbs', { conn: this.currConn });
+                this.load();
                 return [];
             } else {
                 const dbs = Object.values(cache).map((db) => {
