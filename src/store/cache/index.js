@@ -17,13 +17,17 @@ export default {
     },
     mutations: {
         setDbs (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+
             for (let i = 0; i < data.payload.length; i++) {
                 const db = data.payload[i];
-                state.caches[data.conn.id][db.db_name] = {
-                    ...state.caches[data.conn.id][db.db_name],
-                    ...db
-                };
+                const dbName = db.db_name;
+
+                caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
             }
+
+            state.caches = Object.assign({}, caches);
         },
         setDb (state, data) {
             const caches = state.caches;
@@ -35,13 +39,18 @@ export default {
             state.caches = Object.assign({}, caches);
         },
         setDocs (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+
             for (let i = 0; i < data.payload.length; i++) {
                 const docs = data.payload[i];
-                state.caches[data.conn.id][docs.db] = {
-                    ...state.caches[data.conn.id][docs.db],
-                    docs: docs
-                };
+                const dbName = docs.db;
+
+                caches[connId][dbName] = Object.assign(caches[connId][dbName], { docs });
             }
+
+            state.caches = Object.assign({}, caches);
+        },
         setDoc (state, data) {
             const caches = state.caches;
             const connId = data.conn.id;
