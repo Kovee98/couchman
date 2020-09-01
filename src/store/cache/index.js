@@ -25,6 +25,15 @@ export default {
                 };
             }
         },
+        setDb (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+            const db = data.payload;
+            const dbName = db.db_name;
+
+            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
+            state.caches = Object.assign({}, caches);
+        },
         setDocs (state, data) {
             for (let i = 0; i < data.payload.length; i++) {
                 const docs = data.payload[i];
@@ -33,6 +42,14 @@ export default {
                     docs: docs
                 };
             }
+        setDoc (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+            const docs = data.payload;
+            const dbName = docs.db;
+
+            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, { docs });
+            state.caches = Object.assign({}, caches);
         },
         removeDb (state, data) {
             delete state.caches[data.conn.id][data.db];
@@ -63,8 +80,16 @@ export default {
             context.commit('setDbs', data);
             save(context.state);
         },
+        setDb (context, data) {
+            context.commit('setDb', data);
+            save(context.state);
+        },
         setDocs (context, data) {
             context.commit('setDocs', data);
+            save(context.state);
+        },
+        setDoc (context, data) {
+            context.commit('setDoc', data);
             save(context.state);
         },
         removeDb (context, data) {

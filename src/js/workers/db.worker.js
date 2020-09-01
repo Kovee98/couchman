@@ -1,34 +1,8 @@
 onmessage = function (e) {
     const conn = e.data.conn;
-    const allDbs = e.data.dbs;
-    const dbs = [];
-    const reqs = [];
+    let allDbs = e.data.dbs;
 
-    if (allDbs) {
-        postMessage({
-            type: 'buildDocs',
-            conn: conn,
-            payload: allDbs
-        });
-
-        for (let i = 0; i < allDbs.length; i++) {
-            const db = allDbs[i];
-
-            reqs[i] = new XMLHttpRequest();
-
-            reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
-
-            if (conn.user && conn.pass) {
-                reqs[i].setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
-            }
-
-            reqs[i].onload = function () {
-                dbs.push(JSON.parse(reqs[i].response));
-            };
-
-            reqs[i].send();
-        }
-    } else {
+    if (!allDbs) {
         const req = new XMLHttpRequest();
 
         req.open('GET', `${conn.baseUrl}/_all_dbs`, false);
@@ -38,39 +12,38 @@ onmessage = function (e) {
         }
 
         req.onload = function () {
-            const allDbs = JSON.parse(req.response);
-
-            postMessage({
-                type: 'buildDocs',
-                conn: conn,
-                payload: allDbs
-            });
-
-            for (let i = 0; i < allDbs.length; i++) {
-                const db = allDbs[i];
-
-                reqs[i] = new XMLHttpRequest();
-
-                reqs[i].open('GET', `${conn.baseUrl}/${db}`, false);
-
-                if (conn.user && conn.pass) {
-                    reqs[i].setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
-                }
-
-                reqs[i].onload = function () {
-                    dbs.push(JSON.parse(reqs[i].response));
-                };
-
-                reqs[i].send();
-            }
+            allDbs = JSON.parse(req.response);
         };
 
         req.send();
     }
 
     postMessage({
-        type: 'setDbs',
+        type: 'buildDocs',
         conn: conn,
-        payload: dbs
+        payload: allDbs
     });
+
+    for (let i = 0; i < allDbs.length; i++) {
+        const db = allDbs[i];
+        const req = new XMLHttpRequest();
+
+        req.open('GET', `${conn.baseUrl}/${db}`, false);
+
+        if (conn.user && conn.pass) {
+            req.setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
+
+        req.onload = function () {
+            const db = JSON.parse(req.response);
+
+            postMessage({
+                type: 'setDb',
+                conn: conn,
+                payload: db
+            });
+        };
+
+        req.send();
+    }
 };
