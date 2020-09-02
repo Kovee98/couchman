@@ -2,8 +2,7 @@ import db from '../../js/db';
 import DbWorker from '../../js/workers/db.worker.js';
 import DocWorker from '../../js/workers/doc.worker.js';
 
-const dbWorker = new DbWorker();
-const docWorker = new DocWorker();
+const workers = {};
 const save = db.cache.save;
 
 export default {
@@ -18,63 +17,133 @@ export default {
     },
     mutations: {
         setDbs (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+
             for (let i = 0; i < data.payload.length; i++) {
                 const db = data.payload[i];
-                state.caches[data.currConn.id][db.db_name] = {
-                    ...state.caches[data.currConn.id][db.db_name],
-                    ...db
-                };
+                const dbName = db.db_name;
+
+                caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
             }
+
+            state.caches = Object.assign({}, caches);
+        },
+        setDb (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+            const db = data.payload;
+            const dbName = db.db_name;
+
+            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
+            state.caches = Object.assign({}, caches);
         },
         setDocs (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+
             for (let i = 0; i < data.payload.length; i++) {
                 const docs = data.payload[i];
-                state.caches[data.currConn.id][docs.db] = {
-                    ...state.caches[data.currConn.id][docs.db],
-                    docs: docs
-                };
+                const dbName = docs.db;
+
+                caches[connId][dbName] = Object.assign(caches[connId][dbName], { docs });
             }
+
+            state.caches = Object.assign({}, caches);
+        },
+        setDoc (state, data) {
+            const caches = state.caches;
+            const connId = data.conn.id;
+            const docs = data.payload;
+            const dbName = docs.db;
+
+            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, { docs });
+            state.caches = Object.assign({}, caches);
         },
         removeDb (state, data) {
-            delete state.caches[data.currConn.id][data.db];
-            state.caches[data.currConn.id] = Object.assign({}, state.caches[data.currConn.id]);
+            delete state.caches[data.conn.id][data.db];
+            state.caches[data.conn.id] = Object.assign({}, state.caches[data.conn.id]);
+        },
+        removeConn (state, data) {
+            delete state.caches[data.conn.id];
+            state.caches = Object.assign({}, state.caches);
         }
     },
     actions: {
+        buildConns (context, data) {
+            Object.values(workers).forEach((worker) => {
+                worker.dbWorker.postMessage({ conn: worker.conn });
+            });
+        },
+        removeConn (context, data) {
+            context.commit('removeConn', data);
+            save(context.state);
+        },
         buildDbs (context, data) {
-            dbWorker.postMessage(data);
+            workers[data.conn.id].dbWorker.postMessage(data);
         },
         buildDocs (context, data) {
-            docWorker.postMessage(data);
+            workers[data.conn.id].docWorker.postMessage(data);
         },
         setDbs (context, data) {
             context.commit('setDbs', data);
+            save(context.state);
+        },
+        setDb (context, data) {
+            context.commit('setDb', data);
             save(context.state);
         },
         setDocs (context, data) {
             context.commit('setDocs', data);
             save(context.state);
         },
+        setDoc (context, data) {
+            context.commit('setDoc', data);
+            save(context.state);
+        },
         removeDb (context, data) {
             context.commit('removeDb', data);
             save(context.state);
         },
-        init (context) {
+        clear (context) {
+            context.state.isReady = false;
+            context.state.caches = {};
+            db.cache.clear();
+        },
+        init (context, { conns }) {
             // load connections from db into memory
             db.cache.load().then((data) => {
                 if (data) {
-                    context.state.caches = data.caches || {};
-                    context.state.isReady = true;
+                    context.state.caches = data.caches;
                 }
+
+                // create associative array of workers for each connection
+                for (let i = 0; i < conns.length; i++) {
+                    const conn = conns[i];
+
+                    // ensure a cache exists for this connection
+                    if (!context.state.caches[conn.id]) {
+                        context.state.caches[conn.id] = {};
+                    }
+
+                    const dbWorker = new DbWorker();
+                    const docWorker = new DocWorker();
+
+                    dbWorker.onmessage = function (e) {
+                        context.dispatch(e.data.type, e.data);
+                    };
+
+                    docWorker.onmessage = function (e) {
+                        context.dispatch(e.data.type, e.data);
+                    };
+
+                    workers[conn.id] = { conn, dbWorker, docWorker };
+                }
+
+                context.state.isReady = true;
+
+                context.dispatch('buildConns');
             });
-
-            dbWorker.onmessage = function (e) {
-                context.dispatch(e.data.type, e.data);
-            };
-
-            docWorker.onmessage = function (e) {
-                context.dispatch(e.data.type, e.data);
-            };
         }
     }
 };

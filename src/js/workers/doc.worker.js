@@ -1,28 +1,28 @@
 onmessage = function (e) {
-    const currConn = e.data.currConn;
+    const conn = e.data.conn;
     const allDbs = e.data.payload;
-    const docs = [];
-    const xhr = [];
 
     for (let i = 0; i < allDbs.length; i++) {
         const db = allDbs[i];
+        const req = new XMLHttpRequest();
 
-        xhr[i] = new XMLHttpRequest();
+        req.open('GET', `${conn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
 
-        xhr[i].open('GET', `${currConn.baseUrl}/${db}/_all_docs?include_docs=true`, false);
+        if (conn.user && conn.pass) {
+            req.setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
 
-        xhr[i].onload = function () {
-            const res = JSON.parse(xhr[i].response);
+        req.onload = function () {
+            const res = JSON.parse(req.response);
             res.db = db;
-            docs.push(res);
+
+            postMessage({
+                type: 'setDoc',
+                conn: conn,
+                payload: res
+            });
         };
 
-        xhr[i].send();
+        req.send();
     }
-
-    postMessage({
-        type: 'setDocs',
-        currConn: currConn,
-        payload: docs
-    });
 };

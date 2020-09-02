@@ -49,10 +49,16 @@ export default {
             return this.$store.getters['connections/currConn'];
         }
     },
+    watch: {
+        conns () {
+            if (this.conns && this.conns.length > 0) {
+                this.$store.dispatch('cache/init', { conns: this.conns });
+            }
+        }
+    },
     created () {
         this.$store.dispatch('connections/init');
         this.$store.dispatch('views/init');
-        this.$store.dispatch('cache/init');
     }
 };
 </script>

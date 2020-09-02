@@ -107,6 +107,7 @@ export default {
                     variant: 'danger',
                     action: () => {
                         this.$store.dispatch('connections/remove', i);
+                        this.$store.dispatch('cache/removeConn', { conn: conn });
                     }
                 },
                 cancel: {

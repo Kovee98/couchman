@@ -6,6 +6,7 @@ const save = db.connections.save;
 export default {
     namespaced: true,
     state: {
+        id: 0,
         curr: 0,
         conns: [],
         currConn: {}
@@ -17,7 +18,10 @@ export default {
     },
     mutations: {
         add (state, conn) {
+            conn.id = state.id;
             state.conns.push(conn);
+            state.id++;
+            state.currConn = state.conns[state.curr];
         },
         remove (state, i) {
             state.conns.splice(i, 1);
@@ -28,6 +32,7 @@ export default {
         },
         update (state, { i, conn }) {
             state.conns.splice(i, 1, conn);
+            state.currConn = state.conns[state.curr];
         },
         activate (state, i) {
             state.curr = i;
@@ -59,12 +64,20 @@ export default {
         save (context) {
             save(context.state);
         },
+        clear (context) {
+            context.state.id = 0;
+            context.state.curr = 0;
+            context.state.conns = [];
+            context.state.currConn = {};
+            db.connections.clear();
+        },
         init (context) {
             // load connections from db into memory
             db.connections.load().then((data) => {
                 if (data) {
-                    context.state.conns = data.conns;
+                    context.state.id = data.id;
                     context.state.curr = data.curr;
+                    context.state.conns = data.conns;
                     context.state.currConn = data.currConn;
                 }
             });

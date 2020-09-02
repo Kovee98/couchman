@@ -192,19 +192,18 @@ export default {
                 'There are no fields that match the view'}`;
         },
 
-        caches () {
-            return this.$store.getters['cache/caches'];
-        },
-
         docs () {
+            const caches = this.$store.getters['cache/caches'];
             const isCacheReady = this.$store.getters['cache/isReady'];
-            if (!this.currConn.id || !isCacheReady) return [];
+            const currConn = this.currConn;
+
+            if (!isCacheReady || !currConn || (!currConn.id && currConn.id !== 0)) return [];
 
             const db = this.$route.params.db;
-            const cache = this.caches[this.currConn.id][db];
+            const cache = caches[currConn.id][db];
 
             if (!cache) {
-                this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+                this.load();
                 return [];
             } else {
                 return cache.docs.rows.map(record => record.doc);
@@ -261,7 +260,7 @@ export default {
                                 this.$log.error('err:', err);
                             }).finally(() => {
                                 this.$store.dispatch('cache/buildDbs', {
-                                    currConn: this.currConn,
+                                    conn: this.currConn,
                                     dbs: [db]
                                 });
                             });
@@ -277,7 +276,7 @@ export default {
 
         // triggers a re-caching of all dbs/docs
         load () {
-            this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+            this.$store.dispatch('cache/buildDbs', { conn: this.currConn });
         }
     }
 };

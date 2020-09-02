@@ -134,18 +134,17 @@ export default {
             return this.fields.map(field => field.key);
         },
 
-        caches () {
-            return this.$store.getters['cache/caches'];
-        },
-
         dbs () {
+            const caches = this.$store.getters['cache/caches'];
             const isCacheReady = this.$store.getters['cache/isReady'];
-            if (!this.currConn.id || !isCacheReady) return [];
+            const currConn = this.currConn;
 
-            const cache = this.caches[this.currConn.id];
+            if (!isCacheReady || !currConn || (!currConn.id && currConn.id !== 0)) return [];
+
+            const cache = caches[currConn.id];
 
             if (!cache) {
-                this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+                this.load();
                 return [];
             } else {
                 const dbs = Object.values(cache).map((db) => {
@@ -184,7 +183,7 @@ export default {
                             this.$log.error(err);
                         }).finally(() => {
                             this.$store.dispatch('cache/removeDb', {
-                                currConn: this.currConn,
+                                conn: this.currConn,
                                 db: db
                             });
                         });
@@ -199,7 +198,7 @@ export default {
 
         // triggers a re-caching of all dbs/docs
         load () {
-            this.$store.dispatch('cache/buildDbs', { currConn: this.currConn });
+            this.$store.dispatch('cache/buildDbs', { conn: this.currConn });
         }
     }
 };

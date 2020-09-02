@@ -1,64 +1,49 @@
 onmessage = function (e) {
-    const currConn = e.data.currConn;
-    const allDbs = e.data.dbs;
-    const dbs = [];
-    const reqs = [];
+    const conn = e.data.conn;
+    let allDbs = e.data.dbs;
 
-    if (allDbs) {
-        postMessage({
-            type: 'buildDocs',
-            currConn: currConn,
-            payload: allDbs
-        });
-
-        for (let i = 0; i < allDbs.length; i++) {
-            const db = allDbs[i];
-
-            reqs[i] = new XMLHttpRequest();
-
-            reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
-
-            reqs[i].onload = function () {
-                dbs.push(JSON.parse(reqs[i].response));
-            };
-
-            reqs[i].send();
-        }
-    } else {
+    if (!allDbs) {
         const req = new XMLHttpRequest();
 
-        req.open('GET', `${currConn.baseUrl}/_all_dbs`, false);
+        req.open('GET', `${conn.baseUrl}/_all_dbs`, false);
+
+        if (conn.user && conn.pass) {
+            req.setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
 
         req.onload = function () {
-            const allDbs = JSON.parse(req.response);
-
-            postMessage({
-                type: 'buildDocs',
-                currConn: currConn,
-                payload: allDbs
-            });
-
-            for (let i = 0; i < allDbs.length; i++) {
-                const db = allDbs[i];
-
-                reqs[i] = new XMLHttpRequest();
-
-                reqs[i].open('GET', `${currConn.baseUrl}/${db}`, false);
-
-                reqs[i].onload = function () {
-                    dbs.push(JSON.parse(reqs[i].response));
-                };
-
-                reqs[i].send();
-            }
+            allDbs = JSON.parse(req.response);
         };
 
         req.send();
     }
 
     postMessage({
-        type: 'setDbs',
-        currConn: currConn,
-        payload: dbs
+        type: 'buildDocs',
+        conn: conn,
+        payload: allDbs
     });
+
+    for (let i = 0; i < allDbs.length; i++) {
+        const db = allDbs[i];
+        const req = new XMLHttpRequest();
+
+        req.open('GET', `${conn.baseUrl}/${db}`, false);
+
+        if (conn.user && conn.pass) {
+            req.setRequestHeader('Authorization', 'Basic ' + btoa(`${conn.user}:${conn.pass}`));
+        }
+
+        req.onload = function () {
+            const db = JSON.parse(req.response);
+
+            postMessage({
+                type: 'setDb',
+                conn: conn,
+                payload: db
+            });
+        };
+
+        req.send();
+    }
 };
