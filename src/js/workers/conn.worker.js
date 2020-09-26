@@ -41,7 +41,6 @@ onmessage = function (e) {
 
         // divide cache labor into chunks for more efficient data collection
         const chunks = Math.ceil(dbs.length / chunkSize);
-        console.log('chunks:', chunks);
 
         for (let i = 0; i < chunks; i++) {
             const index = i * chunkSize;
