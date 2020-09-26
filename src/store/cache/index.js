@@ -16,50 +16,26 @@ export default {
         caches: (state) => state.caches
     },
     mutations: {
-        setDbs (state, data) {
+        addDbs (state, data) {
             const caches = state.caches;
             const connId = data.conn.id;
 
             for (let i = 0; i < data.payload.length; i++) {
                 const db = data.payload[i];
-                const dbName = db.db_name;
-
-                caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
+                caches[connId][db] = {};
             }
 
             state.caches = Object.assign({}, caches);
         },
-        setDb (state, data) {
-            const caches = state.caches;
-            const connId = data.conn.id;
-            const db = data.payload;
-            const dbName = db.db_name;
 
-            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, db);
-            state.caches = Object.assign({}, caches);
-        },
-        setDocs (state, data) {
+        addDocs (state, data) {
             const caches = state.caches;
             const connId = data.conn.id;
 
-            for (let i = 0; i < data.payload.length; i++) {
-                const docs = data.payload[i];
-                const dbName = docs.db;
-
-                caches[connId][dbName] = Object.assign(caches[connId][dbName], { docs });
-            }
-
+            caches[connId] = Object.assign(caches[connId] || {}, data.payload);
             state.caches = Object.assign({}, caches);
         },
-        setDoc (state, data) {
-            const caches = state.caches;
-            const connId = data.conn.id;
-            const docs = data.payload;
-            const dbName = docs.db;
 
-            caches[connId][dbName] = Object.assign(caches[connId][dbName] || {}, { docs });
-            state.caches = Object.assign({}, caches);
-        },
         removeDb (state, data) {
             delete state.caches[data.conn.id][data.db];
             state.caches[data.conn.id] = Object.assign({}, state.caches[data.conn.id]);
@@ -106,28 +82,20 @@ export default {
         removeConn (context, data) {
             context.commit('removeConn', data);
             db.save(context.state);
+
+            delete workers[data.conn.id];
         },
-        buildDbs (context, data) {
-            workers[data.conn.id].dbWorker.postMessage(data);
+
+        // adds a collection of dbs to a connection's cache
+        addDbs (context, data) {
+            context.commit('addDbs', data);
+            db.save(context.state);
         },
-        buildDocs (context, data) {
-            workers[data.conn.id].docWorker.postMessage(data);
-        },
-        setDbs (context, data) {
-            context.commit('setDbs', data);
-            save(context.state);
-        },
-        setDb (context, data) {
-            context.commit('setDb', data);
-            save(context.state);
-        },
-        setDocs (context, data) {
-            context.commit('setDocs', data);
-            save(context.state);
-        },
-        setDoc (context, data) {
-            context.commit('setDoc', data);
-            save(context.state);
+
+        // adds a collection of dbs to a connection's cache
+        addDocs (context, data) {
+            context.commit('addDocs', data);
+            db.save(context.state);
         },
 
         removeDb (context, data) {
