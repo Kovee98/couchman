@@ -134,14 +134,21 @@ export default {
             return this.fields.map(field => field.key);
         },
 
+        isCacheReady () {
+            return this.$store.getters['cache/isReady'];
+        },
+
+        caches () {
+            return this.$store.getters['cache/caches'];
+        },
+
         dbs () {
-            const caches = this.$store.getters['cache/caches'];
-            const isCacheReady = this.$store.getters['cache/isReady'];
             const currConn = this.currConn;
 
-            if (!isCacheReady || !currConn || (!currConn.id && currConn.id !== 0)) return [];
+            // return empty array until we have all the data necessary
+            if (!this.isCacheReady || !currConn || (!currConn.id && currConn.id !== 0)) return [];
 
-            const cache = caches[currConn.id];
+            const cache = this.caches[currConn.id];
 
             if (!cache) {
                 this.load();

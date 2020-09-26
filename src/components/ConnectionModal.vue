@@ -173,7 +173,6 @@ export default {
     methods: {
         submit () {
             const conn = this.getConn();
-
             const invalid = this.validate(conn);
 
             if (invalid.length > 0) {
@@ -188,10 +187,13 @@ export default {
             this.$events.$emit('alert-close');
 
             const action = `connections/${this.action}`;
+
             this.$store.dispatch(action, {
                 i: this.index,
                 conn: conn
             });
+
+            this.$store.dispatch('cache/createConn', { conn });
 
             this.$bvModal.hide('connection-modal');
         },
