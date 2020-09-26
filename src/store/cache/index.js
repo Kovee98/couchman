@@ -1,6 +1,5 @@
-import db from '../../js/db';
-import DbWorker from '../../js/workers/db.worker.js';
-import DocWorker from '../../js/workers/doc.worker.js';
+// eslint-disable-next-line import/default
+import ConnWorker from '../../js/workers/conn.worker.js';
 
 const workers = {};
 const save = db.cache.save;
@@ -70,9 +69,20 @@ export default {
         }
     },
     actions: {
-        buildConns (context, data) {
+        // triggers a cache build for each connection in the array of conn workers
+        buildCache (context, data) {
+            const caches = context.state.caches;
+
             Object.values(workers).forEach((worker) => {
-                worker.dbWorker.postMessage({ conn: worker.conn });
+                const connId = worker.conn.id;
+                if (!caches[connId]) {
+                    caches[connId] = {};
+                }
+
+                worker.connWorker.postMessage({
+                    conn: worker.conn,
+                    cache: caches[connId]
+                });
             });
         },
 
@@ -136,29 +146,18 @@ export default {
                 // create associative array of workers for each connection
                 for (let i = 0; i < conns.length; i++) {
                     const conn = conns[i];
+                    const connWorker = new ConnWorker();
 
-                    // ensure a cache exists for this connection
-                    if (!context.state.caches[conn.id]) {
-                        context.state.caches[conn.id] = {};
-                    }
-
-                    const dbWorker = new DbWorker();
-                    const docWorker = new DocWorker();
-
-                    dbWorker.onmessage = function (e) {
+                    connWorker.onmessage = function (e) {
                         context.dispatch(e.data.type, e.data);
                     };
 
-                    docWorker.onmessage = function (e) {
-                        context.dispatch(e.data.type, e.data);
-                    };
-
-                    workers[conn.id] = { conn, dbWorker, docWorker };
+                    workers[conn.id] = { conn, connWorker };
                 }
 
                 context.state.isReady = true;
 
-                context.dispatch('buildConns');
+                context.dispatch('buildCache');
             });
         }
     }
