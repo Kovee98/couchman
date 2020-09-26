@@ -1,7 +1,7 @@
-import db from '../../js/db';
+import dbs from '../../js/db';
 import router from '../../router';
 
-const save = db.connections.save;
+const db = dbs.connections;
 
 export default {
     namespaced: true,
@@ -42,19 +42,19 @@ export default {
     actions: {
         add (context, { conn }) {
             context.commit('add', conn);
-            save(context.state);
+            db.save(context.state);
         },
         remove (context, data) {
             context.commit('remove', data);
-            save(context.state);
+            db.save(context.state);
         },
         update (context, data) {
             context.commit('update', data);
-            save(context.state);
+            db.save(context.state);
         },
         activate (context, data) {
             context.commit('activate', data);
-            save(context.state);
+            db.save(context.state);
 
             // start at /dbs for activated conn
             if (router.app.$route.params.db) {
@@ -62,18 +62,20 @@ export default {
             }
         },
         save (context) {
-            save(context.state);
+            db.save(context.state);
         },
         clear (context) {
             context.state.id = 0;
             context.state.curr = 0;
             context.state.conns = [];
             context.state.currConn = {};
-            db.connections.clear();
+
+            db.clear();
+            db.save(context.state);
         },
         init (context) {
             // load connections from db into memory
-            db.connections.load().then((data) => {
+            db.load().then((data) => {
                 if (data) {
                     context.state.id = data.id;
                     context.state.curr = data.curr;

@@ -1,8 +1,9 @@
+import dbs from '../../js/db';
 // eslint-disable-next-line import/default
 import ConnWorker from '../../js/workers/conn.worker.js';
 
 const workers = {};
-const save = db.cache.save;
+const db = dbs.cache;
 
 export default {
     namespaced: true,
@@ -63,6 +64,7 @@ export default {
             delete state.caches[data.conn.id][data.db];
             state.caches[data.conn.id] = Object.assign({}, state.caches[data.conn.id]);
         },
+
         removeConn (state, data) {
             delete state.caches[data.conn.id];
             state.caches = Object.assign({}, state.caches);
@@ -103,7 +105,7 @@ export default {
 
         removeConn (context, data) {
             context.commit('removeConn', data);
-            save(context.state);
+            db.save(context.state);
         },
         buildDbs (context, data) {
             workers[data.conn.id].dbWorker.postMessage(data);
@@ -127,18 +129,22 @@ export default {
             context.commit('setDoc', data);
             save(context.state);
         },
+
         removeDb (context, data) {
             context.commit('removeDb', data);
-            save(context.state);
+            db.save(context.state);
         },
+
         clear (context) {
-            context.state.isReady = false;
             context.state.caches = {};
-            db.cache.clear();
+
+            db.clear();
+            db.save(context.state);
         },
+
         init (context, { conns }) {
             // load connections from db into memory
-            db.cache.load().then((data) => {
+            db.load().then((data) => {
                 if (data) {
                     context.state.caches = data.caches;
                 }
