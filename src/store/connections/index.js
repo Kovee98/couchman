@@ -47,6 +47,11 @@ export default {
         remove (context, data) {
             context.commit('remove', data);
             db.save(context.state);
+
+            // start at /dbs when conn removed
+            if (router.app.$route.params.db) {
+                router.push('/dbs');
+            }
         },
         update (context, data) {
             context.commit('update', data);
