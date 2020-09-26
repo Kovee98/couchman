@@ -75,6 +75,22 @@ export default {
                 worker.dbWorker.postMessage({ conn: worker.conn });
             });
         },
+
+        // create worker for new connection and trigger a cache build
+        createConn (context, data) {
+            const conn = data.conn;
+            const connWorker = new ConnWorker();
+
+            connWorker.onmessage = function (e) {
+                context.dispatch(e.data.type, e.data);
+            };
+
+            workers[conn.id] = { conn, connWorker };
+
+            // build cache for new connection
+            context.dispatch('buildCache');
+        },
+
         removeConn (context, data) {
             context.commit('removeConn', data);
             save(context.state);
